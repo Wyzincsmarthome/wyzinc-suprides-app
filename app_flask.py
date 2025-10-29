@@ -185,10 +185,6 @@ def health():
 
 @app.route("/")
 def index():
-    return redirect("/suprides/review_classified", code=302)
-
-@app.route("/")
-def index():
     cfg = load_cfg()
     stats = {
         "simulate": _get_simulate_flag(),
@@ -219,6 +215,7 @@ def index():
         ]
         a = "".join([f"<li><a href='{u}'>{t}</a></li>" for u,t in links])
         return f"<h1>App — UI básica</h1><ul>{a}</ul><pre>{json.dumps(stats, ensure_ascii=False, indent=2)}</pre>"
+        return redirect("/suprides/review_classified", code=302)
 
 
 # ------------------ Suprides Classification ------------------

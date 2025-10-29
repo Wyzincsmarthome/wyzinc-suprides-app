@@ -40,7 +40,7 @@ except Exception:
 
 # -------------------------- Registar blueprints UMA vez -------------------
 app.register_blueprint(bp_enrich)     # já existia no teu projeto
-app.register_blueprint(suprides_bp)   # novo blueprint da Suprides
+app.register_blueprint(suprides_bp, url_prefix="/suprides")   # novo blueprint da Suprides
 
 # -------------------------- Pastas e ficheiros ----------------------------
 os.makedirs("data", exist_ok=True)
@@ -179,10 +179,6 @@ def _fallback_table(rows: list, cols: list, title: str) -> str:
 
 
 # ------------------------ UI -------------------------------
-@app.route("/health")
-def health():
-    return "ok", 200
-
 @app.route("/")
 def index():
     cfg = load_cfg()

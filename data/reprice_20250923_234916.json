@@ -1,0 +1,2797 @@
+{
+  "updated": [
+    {
+      "sku": "4823114017469",
+      "asin": null,
+      "competitor": null,
+      "floor": 45.1,
+      "final": 45.1
+    },
+    {
+      "sku": "4823114017476",
+      "asin": null,
+      "competitor": null,
+      "floor": 45.1,
+      "final": 45.1
+    },
+    {
+      "sku": "4823114056215",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.5,
+      "final": 5.5
+    },
+    {
+      "sku": "10XAJ-TAG-B",
+      "asin": null,
+      "competitor": null,
+      "floor": 29.99,
+      "final": 29.99
+    },
+    {
+      "sku": "10XAJ-TAG-W",
+      "asin": null,
+      "competitor": null,
+      "floor": 29.99,
+      "final": 29.99
+    },
+    {
+      "sku": "0810031993086",
+      "asin": "B0DJKGF5H6",
+      "competitor": null,
+      "floor": 14.3,
+      "final": 14.3
+    },
+    {
+      "sku": "4823114006715",
+      "asin": null,
+      "competitor": null,
+      "floor": 14.3,
+      "final": 14.3
+    },
+    {
+      "sku": "AJ-BATTERYKIT-12M",
+      "asin": null,
+      "competitor": null,
+      "floor": 185.9,
+      "final": 185.9
+    },
+    {
+      "sku": "0856963007743",
+      "asin": "B0F9FSGSDW",
+      "competitor": null,
+      "floor": 2.97,
+      "final": 2.97
+    },
+    {
+      "sku": "0856963007552",
+      "asin": "B0DYD8CJB7",
+      "competitor": null,
+      "floor": 2.64,
+      "final": 2.64
+    },
+    {
+      "sku": "8435325447865",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "0856963007804",
+      "asin": "B0FDGDYDXZ",
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "0856963007934",
+      "asin": "B0DJKLGHNS",
+      "competitor": null,
+      "floor": 7.92,
+      "final": 7.92
+    },
+    {
+      "sku": "0856963007620",
+      "asin": "B0DJKM56RY",
+      "competitor": null,
+      "floor": 7.92,
+      "final": 7.92
+    },
+    {
+      "sku": "0856963007484",
+      "asin": "B0DJKM6M85",
+      "competitor": null,
+      "floor": 7.92,
+      "final": 7.92
+    },
+    {
+      "sku": "0856963007835",
+      "asin": null,
+      "competitor": null,
+      "floor": 7.92,
+      "final": 7.92
+    },
+    {
+      "sku": "8435325447926",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.94,
+      "final": 5.94
+    },
+    {
+      "sku": "0856963007408",
+      "asin": "B0DYDVVNF8",
+      "competitor": null,
+      "floor": 5.94,
+      "final": 5.94
+    },
+    {
+      "sku": "0810031992201",
+      "asin": "B0FDGFW7Q2",
+      "competitor": null,
+      "floor": 2.97,
+      "final": 2.97
+    },
+    {
+      "sku": "0810031992225",
+      "asin": "B0FDGB2NXR",
+      "competitor": null,
+      "floor": 2.64,
+      "final": 2.64
+    },
+    {
+      "sku": "0810031991822",
+      "asin": "B0DJKGNJ7D",
+      "competitor": null,
+      "floor": 3.76,
+      "final": 3.76
+    },
+    {
+      "sku": "0810031991839",
+      "asin": "B0CTRTYJYW",
+      "competitor": null,
+      "floor": 3.76,
+      "final": 3.76
+    },
+    {
+      "sku": "4823114009228",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.9,
+      "final": 9.9
+    },
+    {
+      "sku": "8435325447711",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "0856963007774",
+      "asin": "B0FDG9TY8F",
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "0810031991969",
+      "asin": "B0F9B4PN9N",
+      "competitor": null,
+      "floor": 4.95,
+      "final": 4.95
+    },
+    {
+      "sku": "0810031991976",
+      "asin": "B0FDGFNSNT",
+      "competitor": null,
+      "floor": 4.95,
+      "final": 4.95
+    },
+    {
+      "sku": "0810031991983",
+      "asin": "B0FDG9KK21",
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "8435325447827",
+      "asin": null,
+      "competitor": null,
+      "floor": 7.92,
+      "final": 7.92
+    },
+    {
+      "sku": "0856963007491",
+      "asin": "B0DJKGM9DT",
+      "competitor": null,
+      "floor": 7.92,
+      "final": 7.92
+    },
+    {
+      "sku": "4823114014987",
+      "asin": null,
+      "competitor": null,
+      "floor": 16.5,
+      "final": 16.5
+    },
+    {
+      "sku": "4823114014970",
+      "asin": null,
+      "competitor": null,
+      "floor": 16.5,
+      "final": 16.5
+    },
+    {
+      "sku": "4823114061363",
+      "asin": null,
+      "competitor": null,
+      "floor": 8.39,
+      "final": 8.39
+    },
+    {
+      "sku": "4823114029318",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114050374",
+      "asin": null,
+      "competitor": null,
+      "floor": 8.4,
+      "final": 8.4
+    },
+    {
+      "sku": "4823114029325",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114029332",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114029349",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114029356",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114029363",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114029370",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114029387",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.91,
+      "final": 5.91
+    },
+    {
+      "sku": "4823114050367",
+      "asin": null,
+      "competitor": null,
+      "floor": 8.4,
+      "final": 8.4
+    },
+    {
+      "sku": "4823114029394",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114050213",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114029400",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114029417",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114029424",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114029431",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114029448",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114029455",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114029462",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114050206",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.31,
+      "final": 6.31
+    },
+    {
+      "sku": "4823114061080",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114061158",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114060984",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114060977",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114054105",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114054112",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114054129",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114054136",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114054143",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114054150",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114054167",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114041839",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114041846",
+      "asin": "B0FP9ZKCKF",
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114041853",
+      "asin": "B0FP9ZGSB5",
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114041860",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114041877",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114041884",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114041891",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114045196",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.57,
+      "final": 9.57
+    },
+    {
+      "sku": "4823114054099",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114014963",
+      "asin": null,
+      "competitor": null,
+      "floor": 47.3,
+      "final": 47.3
+    },
+    {
+      "sku": "AJ-COMBIPROTECT-B-DUMMY",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.93,
+      "final": 6.93
+    },
+    {
+      "sku": "4823114014956",
+      "asin": null,
+      "competitor": null,
+      "floor": 47.3,
+      "final": 47.3
+    },
+    {
+      "sku": "0810031991075",
+      "asin": "B0DJKFVNKS",
+      "competitor": null,
+      "floor": 6.93,
+      "final": 6.93
+    },
+    {
+      "sku": "4823114061639",
+      "asin": null,
+      "competitor": null,
+      "floor": 99.23,
+      "final": 99.23
+    },
+    {
+      "sku": "4823114015311",
+      "asin": null,
+      "competitor": null,
+      "floor": 40.7,
+      "final": 40.7
+    },
+    {
+      "sku": "0810031991082",
+      "asin": null,
+      "competitor": null,
+      "floor": 11.88,
+      "final": 11.88
+    },
+    {
+      "sku": "4823114015304",
+      "asin": null,
+      "competitor": null,
+      "floor": 40.7,
+      "final": 40.7
+    },
+    {
+      "sku": "0810031991099",
+      "asin": "B0DJKFY123",
+      "competitor": null,
+      "floor": 11.88,
+      "final": 11.88
+    },
+    {
+      "sku": "4823114036996",
+      "asin": null,
+      "competitor": null,
+      "floor": 14.3,
+      "final": 14.3
+    },
+    {
+      "sku": "4823114036989",
+      "asin": null,
+      "competitor": null,
+      "floor": 14.3,
+      "final": 14.3
+    },
+    {
+      "sku": "4823114027789",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.72,
+      "final": 5.72
+    },
+    {
+      "sku": "4823114014949",
+      "asin": null,
+      "competitor": null,
+      "floor": 19.8,
+      "final": 19.8
+    },
+    {
+      "sku": "0810031990207",
+      "asin": "B0DJKFMQ6B",
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "4823114014932",
+      "asin": null,
+      "competitor": null,
+      "floor": 19.8,
+      "final": 19.8
+    },
+    {
+      "sku": "0810031990207",
+      "asin": "B0DJKFMQ6B",
+      "competitor": null,
+      "floor": 0.88,
+      "final": 0.88
+    },
+    {
+      "sku": "4823114014925",
+      "asin": null,
+      "competitor": null,
+      "floor": 30.8,
+      "final": 30.8
+    },
+    {
+      "sku": "4823114014918",
+      "asin": "B0CW3J3F71",
+      "competitor": null,
+      "floor": 30.8,
+      "final": 30.8
+    },
+    {
+      "sku": "4823114014901",
+      "asin": null,
+      "competitor": null,
+      "floor": 17.05,
+      "final": 17.05
+    },
+    {
+      "sku": "4823114014895",
+      "asin": null,
+      "competitor": null,
+      "floor": 17.05,
+      "final": 17.05
+    },
+    {
+      "sku": "4823114017353",
+      "asin": null,
+      "competitor": null,
+      "floor": 115.5,
+      "final": 115.5
+    },
+    {
+      "sku": "4823114009051",
+      "asin": null,
+      "competitor": null,
+      "floor": 30.8,
+      "final": 30.8
+    },
+    {
+      "sku": "4823114014888",
+      "asin": null,
+      "competitor": null,
+      "floor": 40.7,
+      "final": 40.7
+    },
+    {
+      "sku": "0810031990023",
+      "asin": null,
+      "competitor": null,
+      "floor": 11.88,
+      "final": 11.88
+    },
+    {
+      "sku": "4823114014871",
+      "asin": null,
+      "competitor": null,
+      "floor": 40.7,
+      "final": 40.7
+    },
+    {
+      "sku": "0810031991198",
+      "asin": null,
+      "competitor": null,
+      "floor": 11.88,
+      "final": 11.88
+    },
+    {
+      "sku": "4823114040221",
+      "asin": null,
+      "competitor": null,
+      "floor": 59.4,
+      "final": 59.4
+    },
+    {
+      "sku": "4823114040214",
+      "asin": null,
+      "competitor": null,
+      "floor": 59.4,
+      "final": 59.4
+    },
+    {
+      "sku": "4823114042577",
+      "asin": "B0F9YVWTNX",
+      "competitor": null,
+      "floor": 67.52,
+      "final": 67.52
+    },
+    {
+      "sku": "4823114042560",
+      "asin": null,
+      "competitor": null,
+      "floor": 67.52,
+      "final": 67.52
+    },
+    {
+      "sku": "4823114040306",
+      "asin": null,
+      "competitor": null,
+      "floor": 39.6,
+      "final": 39.6
+    },
+    {
+      "sku": "4823114040320",
+      "asin": null,
+      "competitor": null,
+      "floor": 39.6,
+      "final": 39.6
+    },
+    {
+      "sku": "4823114042652",
+      "asin": null,
+      "competitor": null,
+      "floor": 47.51,
+      "final": 47.51
+    },
+    {
+      "sku": "4823114042645",
+      "asin": null,
+      "competitor": null,
+      "floor": 47.51,
+      "final": 47.51
+    },
+    {
+      "sku": "4823114040269",
+      "asin": null,
+      "competitor": null,
+      "floor": 60.5,
+      "final": 60.5
+    },
+    {
+      "sku": "4823114040252",
+      "asin": null,
+      "competitor": null,
+      "floor": 60.5,
+      "final": 60.5
+    },
+    {
+      "sku": "4823114042614",
+      "asin": null,
+      "competitor": null,
+      "floor": 68.13,
+      "final": 68.13
+    },
+    {
+      "sku": "4823114042607",
+      "asin": null,
+      "competitor": null,
+      "floor": 68.13,
+      "final": 68.13
+    },
+    {
+      "sku": "4823114030727",
+      "asin": null,
+      "competitor": null,
+      "floor": 41.8,
+      "final": 41.8
+    },
+    {
+      "sku": "4823114030734",
+      "asin": null,
+      "competitor": null,
+      "floor": 41.8,
+      "final": 41.8
+    },
+    {
+      "sku": "4823114030680",
+      "asin": null,
+      "competitor": null,
+      "floor": 52.17,
+      "final": 52.17
+    },
+    {
+      "sku": "4823114030697",
+      "asin": null,
+      "competitor": null,
+      "floor": 53.87,
+      "final": 53.87
+    },
+    {
+      "sku": "4823114030703",
+      "asin": null,
+      "competitor": null,
+      "floor": 66.0,
+      "final": 66.0
+    },
+    {
+      "sku": "4823114030710",
+      "asin": null,
+      "competitor": null,
+      "floor": 66.0,
+      "final": 66.0
+    },
+    {
+      "sku": "4823114030666",
+      "asin": "B0FPB3L837",
+      "competitor": null,
+      "floor": 77.25,
+      "final": 77.25
+    },
+    {
+      "sku": "4823114030673",
+      "asin": "B0FP9Z52TN",
+      "competitor": null,
+      "floor": 77.25,
+      "final": 77.25
+    },
+    {
+      "sku": "4823114014864",
+      "asin": null,
+      "competitor": null,
+      "floor": 61.6,
+      "final": 61.6
+    },
+    {
+      "sku": "4823114014857",
+      "asin": null,
+      "competitor": null,
+      "floor": 61.6,
+      "final": 61.6
+    },
+    {
+      "sku": "4823114029790",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.3,
+      "final": 3.3
+    },
+    {
+      "sku": "4823114050442",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.3,
+      "final": 3.3
+    },
+    {
+      "sku": "4823114029806",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.84,
+      "final": 3.84
+    },
+    {
+      "sku": "4823114050459",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.84,
+      "final": 3.84
+    },
+    {
+      "sku": "4823114029813",
+      "asin": null,
+      "competitor": null,
+      "floor": 4.81,
+      "final": 4.81
+    },
+    {
+      "sku": "4823114050466",
+      "asin": null,
+      "competitor": null,
+      "floor": 4.81,
+      "final": 4.81
+    },
+    {
+      "sku": "4823114032349",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114050473",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114014840",
+      "asin": null,
+      "competitor": null,
+      "floor": 33.0,
+      "final": 33.0
+    },
+    {
+      "sku": "AJ-GLASSPROTECT-B-DUMMY",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "4823114014833",
+      "asin": null,
+      "competitor": null,
+      "floor": 33.0,
+      "final": 33.0
+    },
+    {
+      "sku": "0810031990405",
+      "asin": "B0DJKG6B9B",
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "4823114015014",
+      "asin": "B09MZHF2SP",
+      "competitor": null,
+      "floor": 3.08,
+      "final": 3.08
+    },
+    {
+      "sku": "4823114015007",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.08,
+      "final": 3.08
+    },
+    {
+      "sku": "4823114014826",
+      "asin": null,
+      "competitor": null,
+      "floor": 33.0,
+      "final": 33.0
+    },
+    {
+      "sku": "8435325447889",
+      "asin": null,
+      "competitor": null,
+      "floor": 8.91,
+      "final": 8.91
+    },
+    {
+      "sku": "4823114014819",
+      "asin": "B0CTRZNJ2N",
+      "competitor": null,
+      "floor": 33.0,
+      "final": 33.0
+    },
+    {
+      "sku": "0810031990252",
+      "asin": "B0DJKGVDYP",
+      "competitor": null,
+      "floor": 8.91,
+      "final": 8.91
+    },
+    {
+      "sku": "4823114014994",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.05,
+      "final": 6.05
+    },
+    {
+      "sku": "4823114040474",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.05,
+      "final": 6.05
+    },
+    {
+      "sku": "4823114027840",
+      "asin": null,
+      "competitor": null,
+      "floor": 88.0,
+      "final": 88.0
+    },
+    {
+      "sku": "8435325447797",
+      "asin": null,
+      "competitor": null,
+      "floor": 14.85,
+      "final": 14.85
+    },
+    {
+      "sku": "4823114027857",
+      "asin": null,
+      "competitor": null,
+      "floor": 88.0,
+      "final": 88.0
+    },
+    {
+      "sku": "0856963007569",
+      "asin": "B0DJKFT9V3",
+      "competitor": null,
+      "floor": 14.85,
+      "final": 14.85
+    },
+    {
+      "sku": "4823114027925",
+      "asin": null,
+      "competitor": null,
+      "floor": 165.0,
+      "final": 165.0
+    },
+    {
+      "sku": "4823114027932",
+      "asin": null,
+      "competitor": null,
+      "floor": 165.0,
+      "final": 165.0
+    },
+    {
+      "sku": "4823114027888",
+      "asin": null,
+      "competitor": null,
+      "floor": 124.3,
+      "final": 124.3
+    },
+    {
+      "sku": "4823114027895",
+      "asin": null,
+      "competitor": null,
+      "floor": 124.3,
+      "final": 124.3
+    },
+    {
+      "sku": "4823114028021",
+      "asin": null,
+      "competitor": null,
+      "floor": 202.95,
+      "final": 202.95
+    },
+    {
+      "sku": "4823114028038",
+      "asin": null,
+      "competitor": null,
+      "floor": 202.95,
+      "final": 202.95
+    },
+    {
+      "sku": "4823114019258",
+      "asin": null,
+      "competitor": null,
+      "floor": 13.2,
+      "final": 13.2
+    },
+    {
+      "sku": "4823114039232",
+      "asin": null,
+      "competitor": null,
+      "floor": 15.4,
+      "final": 15.4
+    },
+    {
+      "sku": "4823114003110",
+      "asin": null,
+      "competitor": null,
+      "floor": 15.4,
+      "final": 15.4
+    },
+    {
+      "sku": "4823114028120",
+      "asin": null,
+      "competitor": null,
+      "floor": 159.26,
+      "final": 159.26
+    },
+    {
+      "sku": "4823114028137",
+      "asin": null,
+      "competitor": null,
+      "floor": 159.26,
+      "final": 159.26
+    },
+    {
+      "sku": "4823114053474",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.81,
+      "final": 18.81
+    },
+    {
+      "sku": "4823114053481",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.81,
+      "final": 18.81
+    },
+    {
+      "sku": "4823114015113",
+      "asin": null,
+      "competitor": null,
+      "floor": 55.0,
+      "final": 55.0
+    },
+    {
+      "sku": "0810031990412",
+      "asin": "B0DJKGQ3PG",
+      "competitor": null,
+      "floor": 13.86,
+      "final": 13.86
+    },
+    {
+      "sku": "4823114015106",
+      "asin": null,
+      "competitor": null,
+      "floor": 55.0,
+      "final": 55.0
+    },
+    {
+      "sku": "AJ-KEYPAD-W-DUMMY",
+      "asin": null,
+      "competitor": null,
+      "floor": 13.86,
+      "final": 13.86
+    },
+    {
+      "sku": "AJ-KEYPADCOMBI-W-DUMMY",
+      "asin": null,
+      "competitor": null,
+      "floor": 13.86,
+      "final": 13.86
+    },
+    {
+      "sku": "4820246099035",
+      "asin": "B096MPDL64",
+      "competitor": null,
+      "floor": 61.6,
+      "final": 61.6
+    },
+    {
+      "sku": "4823114015397",
+      "asin": null,
+      "competitor": null,
+      "floor": 61.6,
+      "final": 61.6
+    },
+    {
+      "sku": "4823114039720",
+      "asin": null,
+      "competitor": null,
+      "floor": 161.27,
+      "final": 161.27
+    },
+    {
+      "sku": "4823114039737",
+      "asin": null,
+      "competitor": null,
+      "floor": 161.27,
+      "final": 161.27
+    },
+    {
+      "sku": "4823114015380",
+      "asin": null,
+      "competitor": null,
+      "floor": 28.05,
+      "final": 28.05
+    },
+    {
+      "sku": "4823114015373",
+      "asin": null,
+      "competitor": null,
+      "floor": 28.05,
+      "final": 28.05
+    },
+    {
+      "sku": "AJ-LEDSTRIPS",
+      "asin": null,
+      "competitor": null,
+      "floor": 7.92,
+      "final": 7.92
+    },
+    {
+      "sku": "4823114030659",
+      "asin": null,
+      "competitor": null,
+      "floor": 142.78,
+      "final": 142.78
+    },
+    {
+      "sku": "4823114030642",
+      "asin": "B0CZSDQVVT",
+      "competitor": null,
+      "floor": 142.78,
+      "final": 142.78
+    },
+    {
+      "sku": "4823114029288",
+      "asin": null,
+      "competitor": null,
+      "floor": 31.99,
+      "final": 31.99
+    },
+    {
+      "sku": "4823114050091",
+      "asin": null,
+      "competitor": null,
+      "floor": 31.99,
+      "final": 31.99
+    },
+    {
+      "sku": "4823114029295",
+      "asin": null,
+      "competitor": null,
+      "floor": 36.8,
+      "final": 36.8
+    },
+    {
+      "sku": "4823114050107",
+      "asin": null,
+      "competitor": null,
+      "floor": 36.8,
+      "final": 36.8
+    },
+    {
+      "sku": "4823114053658",
+      "asin": null,
+      "competitor": null,
+      "floor": 45.55,
+      "final": 45.55
+    },
+    {
+      "sku": "4823114053665",
+      "asin": null,
+      "competitor": null,
+      "floor": 45.55,
+      "final": 45.55
+    },
+    {
+      "sku": "4823114029301",
+      "asin": null,
+      "competitor": null,
+      "floor": 34.19,
+      "final": 34.19
+    },
+    {
+      "sku": "4823114050114",
+      "asin": null,
+      "competitor": null,
+      "floor": 48.69,
+      "final": 48.69
+    },
+    {
+      "sku": "4823114053634",
+      "asin": null,
+      "competitor": null,
+      "floor": 46.24,
+      "final": 46.24
+    },
+    {
+      "sku": "4823114053641",
+      "asin": null,
+      "competitor": null,
+      "floor": 46.24,
+      "final": 46.24
+    },
+    {
+      "sku": "4823114060953",
+      "asin": null,
+      "competitor": null,
+      "floor": 55.32,
+      "final": 55.32
+    },
+    {
+      "sku": "4823114060960",
+      "asin": null,
+      "competitor": null,
+      "floor": 55.32,
+      "final": 55.32
+    },
+    {
+      "sku": "8435325457819",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "4823114020414",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "4823114045202",
+      "asin": null,
+      "competitor": null,
+      "floor": 49.36,
+      "final": 49.36
+    },
+    {
+      "sku": "4823114053108",
+      "asin": null,
+      "competitor": null,
+      "floor": 49.36,
+      "final": 49.36
+    },
+    {
+      "sku": "4823114053160",
+      "asin": null,
+      "competitor": null,
+      "floor": 49.36,
+      "final": 49.36
+    },
+    {
+      "sku": "4823114053221",
+      "asin": null,
+      "competitor": null,
+      "floor": 49.36,
+      "final": 49.36
+    },
+    {
+      "sku": "AJ-MINIHUB-W",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "4823114015366",
+      "asin": null,
+      "competitor": null,
+      "floor": 75.35,
+      "final": 75.35
+    },
+    {
+      "sku": "0810031990375",
+      "asin": "B0DJKFGCK3",
+      "competitor": null,
+      "floor": 24.75,
+      "final": 24.75
+    },
+    {
+      "sku": "4823114017537",
+      "asin": null,
+      "competitor": null,
+      "floor": 85.8,
+      "final": 85.8
+    },
+    {
+      "sku": "4823114017520",
+      "asin": null,
+      "competitor": null,
+      "floor": 85.8,
+      "final": 85.8
+    },
+    {
+      "sku": "4823114015359",
+      "asin": null,
+      "competitor": null,
+      "floor": 75.35,
+      "final": 75.35
+    },
+    {
+      "sku": "0810031990382",
+      "asin": "B0DJKG8M2Z",
+      "competitor": null,
+      "floor": 24.75,
+      "final": 24.75
+    },
+    {
+      "sku": "4823114064197",
+      "asin": null,
+      "competitor": null,
+      "floor": 238.06,
+      "final": 238.06
+    },
+    {
+      "sku": "4823114017513",
+      "asin": "B0CTX39H85",
+      "competitor": null,
+      "floor": 176.0,
+      "final": 176.0
+    },
+    {
+      "sku": "4823114015342",
+      "asin": "B0CYV5NLCS",
+      "competitor": null,
+      "floor": 149.6,
+      "final": 149.6
+    },
+    {
+      "sku": "4823114009105",
+      "asin": null,
+      "competitor": null,
+      "floor": 28.96,
+      "final": 28.96
+    },
+    {
+      "sku": "4823114022135",
+      "asin": null,
+      "competitor": null,
+      "floor": 3.96,
+      "final": 3.96
+    },
+    {
+      "sku": "4823114015335",
+      "asin": null,
+      "competitor": null,
+      "floor": 33.0,
+      "final": 33.0
+    },
+    {
+      "sku": "0810031990214",
+      "asin": "B0DJKGM8JT",
+      "competitor": null,
+      "floor": 5.94,
+      "final": 5.94
+    },
+    {
+      "sku": "AJ-MOTIONPROTECT-B-LENS",
+      "asin": null,
+      "competitor": null,
+      "floor": 1.39,
+      "final": 1.39
+    },
+    {
+      "sku": "4823114015328",
+      "asin": "B0CVVZ92CR",
+      "competitor": null,
+      "floor": 33.0,
+      "final": 33.0
+    },
+    {
+      "sku": "0810031990238",
+      "asin": "B0DJKGTHF2",
+      "competitor": null,
+      "floor": 5.94,
+      "final": 5.94
+    },
+    {
+      "sku": "4823114037764",
+      "asin": null,
+      "competitor": null,
+      "floor": 1.39,
+      "final": 1.39
+    },
+    {
+      "sku": "4823114015281",
+      "asin": null,
+      "competitor": null,
+      "floor": 46.2,
+      "final": 46.2
+    },
+    {
+      "sku": "4823114015274",
+      "asin": "B0CYH91MN1",
+      "competitor": null,
+      "floor": 46.2,
+      "final": 46.2
+    },
+    {
+      "sku": "4823114015267",
+      "asin": null,
+      "competitor": null,
+      "floor": 81.4,
+      "final": 81.4
+    },
+    {
+      "sku": "4823114046155",
+      "asin": null,
+      "competitor": null,
+      "floor": 81.4,
+      "final": 81.4
+    },
+    {
+      "sku": "4823114015243",
+      "asin": null,
+      "competitor": null,
+      "floor": 36.3,
+      "final": 36.3
+    },
+    {
+      "sku": "4823114015298",
+      "asin": "B08M3KTY45",
+      "competitor": null,
+      "floor": 104.5,
+      "final": 104.5
+    },
+    {
+      "sku": "0810031991105",
+      "asin": "B0DJKGTBQG",
+      "competitor": null,
+      "floor": 17.82,
+      "final": 17.82
+    },
+    {
+      "sku": "AJ-OUTDOORPROTECT-W-LENS",
+      "asin": null,
+      "competitor": null,
+      "floor": 1.49,
+      "final": 1.49
+    },
+    {
+      "sku": "4823114062155",
+      "asin": null,
+      "competitor": null,
+      "floor": 11.03,
+      "final": 11.03
+    },
+    {
+      "sku": "4823114062179",
+      "asin": null,
+      "competitor": null,
+      "floor": 11.03,
+      "final": 11.03
+    },
+    {
+      "sku": "4823114045127",
+      "asin": null,
+      "competitor": null,
+      "floor": 28.24,
+      "final": 28.24
+    },
+    {
+      "sku": "4823114015601",
+      "asin": null,
+      "competitor": null,
+      "floor": 2.63,
+      "final": 2.63
+    },
+    {
+      "sku": "4823114015595",
+      "asin": null,
+      "competitor": null,
+      "floor": 2.63,
+      "final": 2.63
+    },
+    {
+      "sku": "4820246096454",
+      "asin": null,
+      "competitor": null,
+      "floor": 1.1,
+      "final": 1.1
+    },
+    {
+      "sku": "4823114015854",
+      "asin": null,
+      "competitor": null,
+      "floor": 23.1,
+      "final": 23.1
+    },
+    {
+      "sku": "0810031991259",
+      "asin": null,
+      "competitor": null,
+      "floor": 12.1,
+      "final": 12.1
+    },
+    {
+      "sku": "4823114015847",
+      "asin": null,
+      "competitor": null,
+      "floor": 68.2,
+      "final": 68.2
+    },
+    {
+      "sku": "4823114015830",
+      "asin": null,
+      "competitor": null,
+      "floor": 68.2,
+      "final": 68.2
+    },
+    {
+      "sku": "4823114015823",
+      "asin": null,
+      "competitor": null,
+      "floor": 102.3,
+      "final": 102.3
+    },
+    {
+      "sku": "4823114046179",
+      "asin": null,
+      "competitor": null,
+      "floor": 102.3,
+      "final": 102.3
+    },
+    {
+      "sku": "4823114029479",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114050299",
+      "asin": null,
+      "competitor": null,
+      "floor": 7.24,
+      "final": 7.24
+    },
+    {
+      "sku": "4823114029486",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114029493",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114029509",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114029516",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114029523",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114029530",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114029547",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.08,
+      "final": 5.08
+    },
+    {
+      "sku": "4823114050282",
+      "asin": null,
+      "competitor": null,
+      "floor": 7.24,
+      "final": 7.24
+    },
+    {
+      "sku": "4823114029554",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114050138",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114029561",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114029578",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114029585",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114029592",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114029608",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114029615",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114029622",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114050121",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.49,
+      "final": 5.49
+    },
+    {
+      "sku": "4823114061011",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114061226",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114060991",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114061004",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.99,
+      "final": 18.99
+    },
+    {
+      "sku": "4823114053948",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114053955",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114053962",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114053979",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114053986",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114053993",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114054006",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "4823114041198",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114041204",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114041211",
+      "asin": "B0F9V4BG34",
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114041228",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114041235",
+      "asin": "B0FPB1JKRZ",
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114041242",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114041259",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114045172",
+      "asin": null,
+      "competitor": null,
+      "floor": 9.88,
+      "final": 9.88
+    },
+    {
+      "sku": "4823114053931",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.54,
+      "final": 5.54
+    },
+    {
+      "sku": "8435325493091",
+      "asin": null,
+      "competitor": null,
+      "floor": 0.0,
+      "final": 0.0
+    },
+    {
+      "sku": "4823114006722",
+      "asin": null,
+      "competitor": null,
+      "floor": 2.97,
+      "final": 2.97
+    },
+    {
+      "sku": "AJ-SITEGUARD-CHARGER",
+      "asin": null,
+      "competitor": null,
+      "floor": 69.88,
+      "final": 69.88
+    },
+    {
+      "sku": "AJ-SITEGUARD-W",
+      "asin": null,
+      "competitor": null,
+      "floor": 1078.0,
+      "final": 1078.0
+    },
+    {
+      "sku": "AJ-SITEGUARD-Y",
+      "asin": null,
+      "competitor": null,
+      "floor": 1078.0,
+      "final": 1078.0
+    },
+    {
+      "sku": "4823114015809",
+      "asin": null,
+      "competitor": null,
+      "floor": 39.6,
+      "final": 39.6
+    },
+    {
+      "sku": "4823114007316",
+      "asin": null,
+      "competitor": null,
+      "floor": 39.55,
+      "final": 39.55
+    },
+    {
+      "sku": "4823114015793",
+      "asin": null,
+      "competitor": null,
+      "floor": 39.6,
+      "final": 39.6
+    },
+    {
+      "sku": "4823114029639",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029646",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029653",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029660",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029677",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029684",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029691",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029707",
+      "asin": null,
+      "competitor": null,
+      "floor": 5.36,
+      "final": 5.36
+    },
+    {
+      "sku": "4823114029714",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114029721",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114029738",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114029745",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114029752",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114029769",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114029776",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114029783",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.04,
+      "final": 6.04
+    },
+    {
+      "sku": "4823114061295",
+      "asin": null,
+      "competitor": null,
+      "floor": 20.67,
+      "final": 20.67
+    },
+    {
+      "sku": "4823114061370",
+      "asin": null,
+      "competitor": null,
+      "floor": 20.67,
+      "final": 20.67
+    },
+    {
+      "sku": "4823114053788",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114053795",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114053801",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114053818",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114053825",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114053832",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114053849",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114041518",
+      "asin": null,
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114041525",
+      "asin": "B0F9FSWS6V",
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114041532",
+      "asin": null,
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114041549",
+      "asin": "B0F9FRVXNX",
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114041556",
+      "asin": null,
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114041563",
+      "asin": "B0F9FMH987",
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114041570",
+      "asin": "B0F9FTD4HW",
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114045158",
+      "asin": null,
+      "competitor": null,
+      "floor": 10.44,
+      "final": 10.44
+    },
+    {
+      "sku": "4823114053771",
+      "asin": null,
+      "competitor": null,
+      "floor": 6.15,
+      "final": 6.15
+    },
+    {
+      "sku": "4823114015786",
+      "asin": null,
+      "competitor": null,
+      "floor": 16.5,
+      "final": 16.5
+    },
+    {
+      "sku": "0810031990276",
+      "asin": "B0F3P2KFHY",
+      "competitor": null,
+      "floor": 2.97,
+      "final": 2.97
+    },
+    {
+      "sku": "4823114015779",
+      "asin": null,
+      "competitor": null,
+      "floor": 16.5,
+      "final": 16.5
+    },
+    {
+      "sku": "0810031990221",
+      "asin": "B0F3P1QLNY",
+      "competitor": null,
+      "floor": 2.97,
+      "final": 2.97
+    },
+    {
+      "sku": "4823114060861",
+      "asin": null,
+      "competitor": null,
+      "floor": 95.12,
+      "final": 95.12
+    },
+    {
+      "sku": "4823114060878",
+      "asin": null,
+      "competitor": null,
+      "floor": 95.12,
+      "final": 95.12
+    },
+    {
+      "sku": "0810031992997",
+      "asin": "B0DJKG5WLM",
+      "competitor": null,
+      "floor": 9.9,
+      "final": 9.9
+    },
+    {
+      "sku": "4823114037191",
+      "asin": null,
+      "competitor": null,
+      "floor": 276.65,
+      "final": 276.65
+    },
+    {
+      "sku": "4823114028175",
+      "asin": null,
+      "competitor": null,
+      "floor": 236.5,
+      "final": 236.5
+    },
+    {
+      "sku": "4823114028212",
+      "asin": null,
+      "competitor": null,
+      "floor": 324.5,
+      "final": 324.5
+    },
+    {
+      "sku": "4823114015663",
+      "asin": null,
+      "competitor": null,
+      "floor": 68.2,
+      "final": 68.2
+    },
+    {
+      "sku": "4823114015656",
+      "asin": "B0CP53XD7H",
+      "competitor": null,
+      "floor": 68.2,
+      "final": 68.2
+    },
+    {
+      "sku": "4823114015649",
+      "asin": null,
+      "competitor": null,
+      "floor": 68.2,
+      "final": 68.2
+    },
+    {
+      "sku": "4823114015632",
+      "asin": null,
+      "competitor": null,
+      "floor": 68.2,
+      "final": 68.2
+    },
+    {
+      "sku": "810031990726",
+      "asin": "B0DJKGZHJ9",
+      "competitor": null,
+      "floor": 29.7,
+      "final": 29.7
+    },
+    {
+      "sku": "4823114065125",
+      "asin": null,
+      "competitor": null,
+      "floor": 7.8,
+      "final": 7.8
+    },
+    {
+      "sku": "4823114015489",
+      "asin": null,
+      "competitor": null,
+      "floor": 26.4,
+      "final": 26.4
+    },
+    {
+      "sku": "4823114015472",
+      "asin": null,
+      "competitor": null,
+      "floor": 19.8,
+      "final": 19.8
+    },
+    {
+      "sku": "4823114015434",
+      "asin": null,
+      "competitor": null,
+      "floor": 23.1,
+      "final": 23.1
+    },
+    {
+      "sku": "4823114030970",
+      "asin": null,
+      "competitor": null,
+      "floor": 134.41,
+      "final": 134.41
+    },
+    {
+      "sku": "4823114030963",
+      "asin": null,
+      "competitor": null,
+      "floor": 134.41,
+      "final": 134.41
+    },
+    {
+      "sku": "4823114030994",
+      "asin": null,
+      "competitor": null,
+      "floor": 101.87,
+      "final": 101.87
+    },
+    {
+      "sku": "4823114030987",
+      "asin": null,
+      "competitor": null,
+      "floor": 101.87,
+      "final": 101.87
+    },
+    {
+      "sku": "4823114030956",
+      "asin": null,
+      "competitor": null,
+      "floor": 114.5,
+      "final": 114.5
+    },
+    {
+      "sku": "4823114030949",
+      "asin": null,
+      "competitor": null,
+      "floor": 114.5,
+      "final": 114.5
+    },
+    {
+      "sku": "6970504219939",
+      "asin": "B0DQYGXWKV",
+      "competitor": null,
+      "floor": 29.5,
+      "final": 29.5
+    },
+    {
+      "sku": "6975833354238",
+      "asin": "B0D8YHZC6N",
+      "competitor": null,
+      "floor": 85.44,
+      "final": 85.44
+    },
+    {
+      "sku": "6970504215986",
+      "asin": "B09N6KDX5K",
+      "competitor": null,
+      "floor": 56.43,
+      "final": 56.43
+    },
+    {
+      "sku": "6975833351954",
+      "asin": "B0CNPBTQQP",
+      "competitor": null,
+      "floor": 45.34,
+      "final": 45.34
+    },
+    {
+      "sku": "6970504214873",
+      "asin": "B09J2HKS79",
+      "competitor": null,
+      "floor": 82.57,
+      "final": 82.57
+    },
+    {
+      "sku": "6975833352128",
+      "asin": "B0CS2X8JMM",
+      "competitor": null,
+      "floor": 139.29,
+      "final": 139.29
+    },
+    {
+      "sku": "6970504216860",
+      "asin": "B0B127THJ7",
+      "competitor": null,
+      "floor": 74.35,
+      "final": 74.35
+    },
+    {
+      "sku": "6970504215122",
+      "asin": "B0B4KH4W8W",
+      "competitor": null,
+      "floor": 72.67,
+      "final": 72.67
+    },
+    {
+      "sku": "6970504218635",
+      "asin": "B0CLDTP4DB",
+      "competitor": null,
+      "floor": 25.84,
+      "final": 25.84
+    },
+    {
+      "sku": "6970504212527",
+      "asin": null,
+      "competitor": null,
+      "floor": 13.66,
+      "final": 13.66
+    },
+    {
+      "sku": "6970504219649",
+      "asin": "B0CC1TXQ1Q",
+      "competitor": null,
+      "floor": 21.48,
+      "final": 21.48
+    },
+    {
+      "sku": "6975833352135",
+      "asin": "B0CN5FY1ML",
+      "competitor": null,
+      "floor": 22.67,
+      "final": 22.67
+    },
+    {
+      "sku": "6970504219922",
+      "asin": null,
+      "competitor": null,
+      "floor": 204.53,
+      "final": 204.53
+    },
+    {
+      "sku": "6975833355280",
+      "asin": "B0D9CBYHJV",
+      "competitor": null,
+      "floor": 204.53,
+      "final": 204.53
+    },
+    {
+      "sku": "6970504214965",
+      "asin": "B09BJHHYJP",
+      "competitor": null,
+      "floor": 19.8,
+      "final": 19.8
+    },
+    {
+      "sku": "6975833351336",
+      "asin": "B0D3M477QD",
+      "competitor": null,
+      "floor": 90.49,
+      "final": 90.49
+    },
+    {
+      "sku": "6970504217416",
+      "asin": "B09VNV27P1",
+      "competitor": null,
+      "floor": 41.28,
+      "final": 41.28
+    },
+    {
+      "sku": "6970504213777",
+      "asin": null,
+      "competitor": null,
+      "floor": 43.16,
+      "final": 43.16
+    },
+    {
+      "sku": "6970504219656",
+      "asin": "B0D9Q9WL26",
+      "competitor": null,
+      "floor": 26.33,
+      "final": 26.33
+    },
+    {
+      "sku": "6970504215979",
+      "asin": null,
+      "competitor": null,
+      "floor": 18.91,
+      "final": 18.91
+    },
+    {
+      "sku": "6970504218178",
+      "asin": "B0B9XZ96PH",
+      "competitor": null,
+      "floor": 83.16,
+      "final": 83.16
+    },
+    {
+      "sku": "6970504219663",
+      "asin": "B0C3XMP6VX",
+      "competitor": null,
+      "floor": 59.7,
+      "final": 59.7
+    },
+    {
+      "sku": "6975833356478",
+      "asin": "B0DCHKSLJC",
+      "competitor": null,
+      "floor": 37.82,
+      "final": 37.82
+    },
+    {
+      "sku": "6975833350933",
+      "asin": "B0CLGLFC26",
+      "competitor": null,
+      "floor": 37.82,
+      "final": 37.82
+    },
+    {
+      "sku": "6975833350957",
+      "asin": "B0CC223PT1",
+      "competitor": null,
+      "floor": 11.39,
+      "final": 11.39
+    },
+    {
+      "sku": "6970504215085",
+      "asin": "B097YFL7RS",
+      "competitor": null,
+      "floor": 46.23,
+      "final": 46.23
+    },
+    {
+      "sku": "6970504210646",
+      "asin": "B087M8LF63",
+      "competitor": null,
+      "floor": 22.47,
+      "final": 22.47
+    },
+    {
+      "sku": "6970504217058",
+      "asin": "B0B6DTSGSJ",
+      "competitor": null,
+      "floor": 42.77,
+      "final": 42.77
+    },
+    {
+      "sku": "6970504213296",
+      "asin": "B08XWHC156",
+      "competitor": null,
+      "floor": 20.59,
+      "final": 20.59
+    },
+    {
+      "sku": "6970504213302",
+      "asin": "B08XW9LYG1",
+      "competitor": null,
+      "floor": 21.98,
+      "final": 21.98
+    },
+    {
+      "sku": "6970504218659",
+      "asin": "B0BZYL6W56",
+      "competitor": null,
+      "floor": 86.33,
+      "final": 86.33
+    },
+    {
+      "sku": "6975833352159",
+      "asin": "B0CN5KHLRT",
+      "competitor": null,
+      "floor": 16.34,
+      "final": 16.34
+    },
+    {
+      "sku": "6975833356195",
+      "asin": "B0DNY19DMC",
+      "competitor": null,
+      "floor": 52.97,
+      "final": 52.97
+    },
+    {
+      "sku": "6975833352166",
+      "asin": "B0CN5KVZQQ",
+      "competitor": null,
+      "floor": 14.85,
+      "final": 14.85
+    },
+    {
+      "sku": "6975833352142",
+      "asin": "B0CJRDB5FB",
+      "competitor": null,
+      "floor": 15.84,
+      "final": 15.84
+    },
+    {
+      "sku": "6975833351299",
+      "asin": "B0CSD4Q79S",
+      "competitor": null,
+      "floor": 29.9,
+      "final": 29.9
+    },
+    {
+      "sku": "6970504215023",
+      "asin": "B094QL17GY",
+      "competitor": null,
+      "floor": 19.01,
+      "final": 19.01
+    },
+    {
+      "sku": "6970504214774",
+      "asin": "B094R8PXNH",
+      "competitor": null,
+      "floor": 29.5,
+      "final": 29.5
+    },
+    {
+      "sku": "6970504214781",
+      "asin": "B094R8217X",
+      "competitor": null,
+      "floor": 31.68,
+      "final": 31.68
+    },
+    {
+      "sku": "6970504214798",
+      "asin": "B095K9G44H",
+      "competitor": null,
+      "floor": 26.83,
+      "final": 26.83
+    },
+    {
+      "sku": "6970504214804",
+      "asin": "B095KG7469",
+      "competitor": null,
+      "floor": 29.5,
+      "final": 29.5
+    },
+    {
+      "sku": "5052847131398",
+      "asin": "B0CRHRJXDL",
+      "competitor": null,
+      "floor": 29.7,
+      "final": 29.7
+    },
+    {
+      "sku": "5052847141212",
+      "asin": "B0D7T5YFX4",
+      "competitor": null,
+      "floor": 29.7,
+      "final": 29.7
+    },
+    {
+      "sku": "5052847109496",
+      "asin": "B08FMWW5V7",
+      "competitor": null,
+      "floor": 29.7,
+      "final": 29.7
+    },
+    {
+      "sku": "8414625319782",
+      "asin": null,
+      "competitor": null,
+      "floor": 39.6,
+      "final": 39.6
+    },
+    {
+      "sku": "8445884024759",
+      "asin": null,
+      "competitor": null,
+      "floor": 41.58,
+      "final": 41.58
+    },
+    {
+      "sku": "8414625272353",
+      "asin": "B08LZSBXNC",
+      "competitor": null,
+      "floor": 41.58,
+      "final": 41.58
+    },
+    {
+      "sku": "8414625272346",
+      "asin": "B08LZRWGZP",
+      "competitor": null,
+      "floor": 42.57,
+      "final": 42.57
+    },
+    {
+      "sku": "8414625272377",
+      "asin": "B08LZS82DR",
+      "competitor": null,
+      "floor": 45.54,
+      "final": 45.54
+    },
+    {
+      "sku": "8414625272384",
+      "asin": "B08LZRM8QB",
+      "competitor": null,
+      "floor": 45.54,
+      "final": 45.54
+    },
+    {
+      "sku": "6438352077069",
+      "asin": "B0BBN4P3P6",
+      "competitor": null,
+      "floor": 35.64,
+      "final": 35.64
+    },
+    {
+      "sku": "6438352077014",
+      "asin": "B0BBN6NRNV",
+      "competitor": null,
+      "floor": 26.73,
+      "final": 26.73
+    },
+    {
+      "sku": "6438352107506",
+      "asin": null,
+      "competitor": null,
+      "floor": 43.56,
+      "final": 43.56
+    },
+    {
+      "sku": "6438352107476",
+      "asin": null,
+      "competitor": null,
+      "floor": 36.63,
+      "final": 36.63
+    },
+    {
+      "sku": "5052847034316",
+      "asin": "B00L2IPFVS",
+      "competitor": null,
+      "floor": 43.56,
+      "final": 43.56
+    },
+    {
+      "sku": "5052847032763",
+      "asin": "B00L2IPEO6",
+      "competitor": null,
+      "floor": 43.56,
+      "final": 43.56
+    },
+    {
+      "sku": "5052847131374",
+      "asin": "B0CRHS6TJ9",
+      "competitor": null,
+      "floor": 16.83,
+      "final": 16.83
+    },
+    {
+      "sku": "5052847131381",
+      "asin": "B0CRHSCJRF",
+      "competitor": null,
+      "floor": 16.83,
+      "final": 16.83
+    },
+    {
+      "sku": "5052847131336",
+      "asin": "B0CRHTCHFL",
+      "competitor": null,
+      "floor": 160.38,
+      "final": 160.38
+    },
+    {
+      "sku": "5052847131343",
+      "asin": "B0CRHS6W72",
+      "competitor": null,
+      "floor": 160.38,
+      "final": 160.38
+    },
+    {
+      "sku": "5052847108468",
+      "asin": "B08FNDYQPK",
+      "competitor": null,
+      "floor": 49.5,
+      "final": 49.5
+    },
+    {
+      "sku": "5052847131268",
+      "asin": "B0DBJ8C13F",
+      "competitor": null,
+      "floor": 97.02,
+      "final": 97.02
+    },
+    {
+      "sku": "5052847109007",
+      "asin": "B0BN33DTT2",
+      "competitor": null,
+      "floor": 213.84,
+      "final": 213.84
+    },
+    {
+      "sku": "5052847126110",
+      "asin": "B0CRHSFHB4",
+      "competitor": null,
+      "floor": 112.86,
+      "final": 112.86
+    }
+  ]
+}

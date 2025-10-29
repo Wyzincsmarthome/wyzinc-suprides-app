@@ -1,0 +1,25 @@
+{
+  "updated": [
+    {
+      "sku": "0810031993086",
+      "asin": "B0DJKGF5H6",
+      "competitor": null,
+      "floor": 23.6,
+      "final": 23.6
+    },
+    {
+      "sku": "0856963007743",
+      "asin": "B0F9FSGSDW",
+      "competitor": null,
+      "floor": 5.23,
+      "final": 5.23
+    },
+    {
+      "sku": "0856963007552",
+      "asin": "B0DYD8CJB7",
+      "competitor": 10.71,
+      "floor": 4.65,
+      "final": 10.7
+    }
+  ]
+}

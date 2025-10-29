@@ -1,0 +1,142 @@
+{
+  "ts": "2025-09-17T22:18:52.145773",
+  "success": true,
+  "count": 3,
+  "items": [
+    {
+      "sku": "0810031993086",
+      "asin": "B0DJKGF5H6",
+      "status": "200",
+      "resp": {
+        "sku": "0810031993086",
+        "status": "INVALID",
+        "submissionId": "9c112a86e15046b8b2671ee102fc8a96",
+        "issues": [
+          {
+            "code": "90000900",
+            "message": "El atributo fulfillmentAvailability no es válido. Elimina fulfillmentAvailability y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "fulfillmentAvailability"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          },
+          {
+            "code": "90000900",
+            "message": "El atributo purchasableOffer no es válido. Elimina purchasableOffer y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "purchasableOffer"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          },
+          {
+            "code": "90000900",
+            "message": "El atributo conditionType no es válido. Elimina conditionType y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "conditionType"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sku": "0856963007743",
+      "asin": "B0F9FSGSDW",
+      "status": "200",
+      "resp": {
+        "sku": "0856963007743",
+        "status": "INVALID",
+        "submissionId": "48762fc08db74f7bb655b40a8b407032",
+        "issues": [
+          {
+            "code": "90000900",
+            "message": "El atributo fulfillmentAvailability no es válido. Elimina fulfillmentAvailability y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "fulfillmentAvailability"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          },
+          {
+            "code": "90000900",
+            "message": "El atributo conditionType no es válido. Elimina conditionType y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "conditionType"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          },
+          {
+            "code": "90000900",
+            "message": "El atributo purchasableOffer no es válido. Elimina purchasableOffer y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "purchasableOffer"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sku": "0856963007552",
+      "asin": "B0DYD8CJB7",
+      "status": "200",
+      "resp": {
+        "sku": "0856963007552",
+        "status": "INVALID",
+        "submissionId": "f2c85b093c514b2e9fc22dd1f5fbe2a9",
+        "issues": [
+          {
+            "code": "90000900",
+            "message": "El atributo conditionType no es válido. Elimina conditionType y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "conditionType"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          },
+          {
+            "code": "90000900",
+            "message": "El atributo fulfillmentAvailability no es válido. Elimina fulfillmentAvailability y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "fulfillmentAvailability"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          },
+          {
+            "code": "90000900",
+            "message": "El atributo purchasableOffer no es válido. Elimina purchasableOffer y vuelve a enviarlo.",
+            "severity": "ERROR",
+            "attributeNames": [
+              "purchasableOffer"
+            ],
+            "categories": [
+              "INVALID_ATTRIBUTE"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

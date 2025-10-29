@@ -1,0 +1,25 @@
+﻿{
+  "productType": "PRODUCT",
+  "patches": [
+    {
+      "op": "replace",
+      "path": "/attributes/purchasable_offer",
+      "value": [
+        {
+          "currency": "EUR",
+          "audience": "ALL",
+          "marketplace_id": "A1RKKUPIHCS9HS",
+          "our_price": [
+            {
+              "schedule": [
+                {
+                  "value_with_tax": 48.77
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

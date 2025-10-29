@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <title>Amazon CSV Sync (Local)</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .card { border: 1px solid #ddd; padding: 16px; border-radius: 12px; }
+    .muted { color: #666; }
+    button { padding: 8px 14px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+    th { background: #f6f6f6; }
+  </style>
+</head>
+<body>
+  <h1>Amazon CSV Sync (Local)</h1>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Estado</h3>
+      <p>Marketplace: <b>{{ stats.marketplace }}</b></p>
+      <p>Simulação: <b>{{ 'ON' if stats.simulate else 'OFF' }}</b></p>
+      <form action="/toggle_simulate" method="post">
+        <button name="simulate" value="{{ '0' if stats.simulate else '1' }}">{{ 'Desligar' if stats.simulate else 'Ligar' }} simulação</button>
+      </form>
+      <hr>
+      <p>Processados: <b>{{ 'Sim' if stats.processados else 'Não' }}</b> |
+         Mapeados (sem filtro): <b>{{ 'Sim' if stats.mapeados_sem_filtro else 'Não' }}</b> |
+         Classificados: <b>{{ 'Sim' if stats.classificados else 'Não' }}</b></p>
+      <p>Selecionados: <b>{{ stats.selected_count }}</b></p>
+    </div>
+
+    <div class="card">
+      <h3>Upload CSV fornecedor</h3>
+      <form action="/upload_csv" method="post" enctype="multipart/form-data">
+        <input type="file" name="csv_file" required>
+        <button type="submit">Processar</button>
+      </form>
+      <p class="muted">Após processar, vê <a href="/review_data">processados</a> ou <a href="/review_data?raw=1">mapeados</a>.</p>
+    </div>
+
+    <div class="card">
+      <h3>Classificação & Estados</h3>
+      <p>Total: <b>{{ stats.status_summary.total }}</b></p>
+      <ul>
+        <li>catalog_match: <b>{{ stats.status_summary.catalog_match }}</b></li>
+        <li>catalog_ambiguous: <b>{{ stats.status_summary.catalog_ambiguous }}</b></li>
+        <li>not_found: <b>{{ stats.status_summary.not_found }}</b></li>
+      </ul>
+      <p>
+        <a href="/classify">Executar classificação</a> |
+        <a href="/review_classified">Ver classificados</a>
+      </p>
+    </div>
+
+    <!-- Cartão de classificação para Suprides -->
+    <div class="card">
+      <h3>Classificação Suprides</h3>
+      {% if stats.suprides_classificados %}
+        <p>Total: <b>{{ stats.suprides_status_summary.total }}</b></p>
+        <ul>
+          {% for st, count in stats.suprides_status_summary.items() %}
+            {% if st != 'total' %}
+              <li>{{ st }}: <b>{{ count }}</b></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+        <p>
+          <a href="/suprides/classify">Executar classificação (Suprides)</a> |
+          <a href="/suprides/review_classified">Ver classificados Suprides</a>
+        </p>
+      {% else %}
+        <p class="muted">Sem classificação de Suprides.</p>
+        <p>
+          <a href="/suprides/classify">Executar classificação</a>
+        </p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h3>Inventário Amazon</h3>
+      <p><a href="/refresh_inventory">Atualizar inventário (Amazon)</a></p>
+      <p><a href="/amazon_listings">Ver listagens ativas</a></p>
+      <hr>
+      <h3>Sync & Repricing</h3>
+      <p><a href="/review_data">Selecionar produtos</a> e depois:
+         <form action="/reprice_selected" method="post" style="display:inline;">
+           <button type="submit">Repreço (concorrência)</button>
+         </form>
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>

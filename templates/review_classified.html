@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <title>Classificação de Produtos — Amazon</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --bg:#0f172a; --card:#111827; --muted:#6b7280; --text:#e5e7eb; --ok:#10b981; --warn:#f59e0b; --bad:#ef4444; --link:#60a5fa; --chip:#1f2937; --chipbd:#374151; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,Noto Sans; background: var(--bg); color: var(--text); }
+    header { padding: 16px 20px; border-bottom: 1px solid #1f2937; position: sticky; top:0; backdrop-filter: blur(6px); background: rgba(15,23,42,.7); z-index: 4; }
+    h1 { margin:0; font-size: 18px; }
+    main { padding: 20px; }
+    .actions { display:flex; gap:8px; flex-wrap: wrap; margin: 12px 0 8px; }
+    .btn { background:#1f2937; color:var(--text); border:1px solid #374151; padding:8px 12px; border-radius:10px; cursor:pointer; font-size:14px; }
+    .btn:hover { background:#111827; }
+    .btn.primary { background:#2563eb; border-color:#2563eb; }
+    .btn.success { background:#059669; border-color:#059669; }
+    .btn.warn { background:#d97706; border-color:#d97706; }
+    .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; border:1px solid #334155; background: #0b1220; color:#cbd5e1; }
+    .badge.ok { border-color:#14532d; color:#bbf7d0; }
+    .badge.amb { border-color:#4f46e5; color:#c7d2fe; }
+    .badge.listed { border-color:#0f766e; color:#99f6e4; }
+    .badge.not { border-color:#7f1d1d; color:#fecaca; }
+    table { width:100%; border-collapse: separate; border-spacing:0; overflow:hidden; border-radius:14px; }
+    thead th { text-align:left; font-weight:600; padding:12px; font-size:12px; color: #9ca3af; background:#0b1220; position:sticky; top:236px; z-index:2; }
+    tbody tr { background: #0b1220; border-bottom:1px solid #111827; }
+    tbody td { padding:12px; vertical-align: top; font-size: 14px; }
+    .muted { color: var(--muted); }
+    .sku { font-family: ui-monospace, Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; color:#93c5fd; }
+    .nowrap { white-space: nowrap; }
+    .right { text-align:right; }
+    .small { font-size:12px; }
+    .pill { display:inline-block; padding:2px 6px; border-radius:999px; border:1px solid #334155; font-size:11px; color:#cbd5e1; }
+    .cand-card { border:1px solid var(--chipbd); background:var(--chip); border-radius:12px; padding:10px; margin-bottom:10px; }
+    .toggle { display:inline-flex; align-items:center; gap:6px; cursor:pointer; background:#0b1220; border:1px solid #1f2937; padding:6px 10px; border-radius:10px; }
+    .toggle:hover { background:#0a1020; }
+    .chev { display:inline-block; transform: rotate(-90deg); transition: transform .15s ease; }
+    .open .chev { transform: rotate(0deg); }
+    .row-cands { display:none; }
+    .row-cands.open { display:block; }
+    .searchbar { display:flex; gap:10px; align-items:center; margin: 8px 0 8px; }
+    .searchbar input { width: 360px; max-width: 90vw; padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb; }
+    .searchbar .hint { font-size:12px; color:#9ca3af; }
+    .filters { display:flex; gap:6px; flex-wrap: wrap; margin: 6px 0 12px; }
+    .filter-chip { cursor:pointer; font-size:12px; border-radius:999px; padding:6px 10px; border:1px solid #334155; background:#0b1220; color:#cbd5e1; }
+    .filter-chip.active { background:#1f2937; border-color:#2563eb; color:#dbeafe; }
+    .money { font-variant-numeric: tabular-nums; }
+    .toast { position: fixed; right: 18px; bottom:18px; background:#111827; color:#e5e7eb; border:1px solid #374151; padding:10px 12px; border-radius:10px; display:none; z-index: 99; }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .selcol { width: 36px; text-align: center; }
+    .sticky-actions { position: sticky; top: 64px; z-index: 3; background: rgba(15,23,42,.7); backdrop-filter: blur(6px); padding-bottom: 6px; }
+    .status-ok { color:#bbf7d0; }
+    .status-err { color:#fecaca; }
+    .offer-col { min-width: 100px; }
+    .results { border:1px solid #334155; background:#0b1220; border-radius:12px; padding:8px 12px; margin-top:8px; }
+    .results-header { display:flex; align-items:center; justify-content: space-between; cursor:pointer; }
+    .results-list { margin-top:8px; max-height: 240px; overflow:auto; font-size:13px; display:none; }
+    .results.open .results-list { display:block; }
+    .res-item { padding:6px 0; border-bottom:1px solid #1f2937; }
+    .res-item:last-child { border-bottom:0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Classificação — <span class="muted">listed / catalog_match / catalog_ambiguous</span></h1>
+    <div class="actions">
+      <a class="btn" href="/classify" title="Reclassificar com regras atuais">Reclassificar</a>
+      <a class="btn" href="/enrich_ambiguous?limit=5" title="Preencher candidatos para ambíguos">Gerar candidatos (5)</a>
+      <a class="btn" href="/enrich_ambiguous?limit=10" title="Preencher candidatos para ambíguos">Gerar candidatos (10)</a>
+      <a class="btn success" href="/review_data">Rever processados</a>
+      <a class="btn" href="/refresh_inventory" title="Atualiza listagens ativas a partir da Amazon">Atualizar inventário</a>
+    </div>
+
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Pesquisar por SKU, ASIN, nome, marca ou EAN..." autocomplete="off" />
+      <span class="hint">Filtra em tempo real na tabela.</span>
+    </div>
+
+    <div class="filters" id="filters">
+      <span class="filter-chip active" data-val="listed">listed</span>
+      <span class="filter-chip active" data-val="catalog_match">catalog_match</span>
+      <span class="filter-chip active" data-val="catalog_ambiguous">catalog_ambiguous</span>
+    </div>
+
+    <div class="actions sticky-actions">
+      <button id="btnSelectVisible" class="btn">Selecionar visíveis (match & não listed)</button>
+      <button id="btnClear" class="btn warn">Limpar seleção</button>
+      <button id="btnReprice" class="btn">Recalcular preços (seleção)</button>
+      <!-- NOVOS BOTÕES DE FEEDS -->
+      <button id="btnCreateOffers" class="btn primary">Criar/Atualizar ofertas (Feed)</button>
+      <button id="btnPushPricing" class="btn">Enviar preços (Feed)</button>
+      <button id="btnPushInventory" class="btn">Enviar stock (Feed)</button>
+    </div>
+
+    <div id="results" class="results">
+      <div id="resultsHeader" class="results-header">
+        <div><strong>Resultados do envio</strong> <span id="resultsCount" class="small muted">(—)</span></div>
+        <div class="toggle"><span class="chev">▶</span> <span class="small">Mostrar/ocultar</span></div>
+      </div>
+      <div id="resultsList" class="results-list"></div>
+    </div>
+  </header>
+
+  <main>
+    {% if error %}
+      <p class="muted">Erro: {{ error }}</p>
+    {% endif %}
+
+    {% if rows|length == 0 %}
+      <p class="muted">Sem dados. Corre <b>/classify</b> primeiro.</p>
+    {% else %}
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th class="selcol"><input type="checkbox" id="chkAll" title="Selecionar página" /></th>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th>EAN</th>
+            <th>Status</th>
+            <th>ASIN</th>
+            <th class="right">Score</th>
+            <th class="right">Custo</th>
+            <th class="right">Floor</th>
+            <th class="right">Concorrência</th>
+            <th class="right">Meu Preço</th>
+            <th class="right">Candidatos</th>
+            <th class="right offer-col">Oferta</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for r in rows %}
+          {% set st = r.get('status','') %}
+          {% set candidates_raw = r.get('candidates','') or '' %}
+          {% set sku = r.get('sku','') %}
+          {% set listed = r.get('listed','') %}
+          <tr class="row" data-sku="{{ sku }}" data-asin="{{ r.get('asin','') }}"
+              data-brand="{{ r.get('brand','') }}" data-title="{{ r.get('title','') }}"
+              data-ean="{{ r.get('ean','') }}" data-status="{{ st }}" data-listed="{{ listed }}">
+            <td class="selcol"><input type="checkbox" class="chkRow" /></td>
+            <td class="nowrap">
+              <div class="sku">{{ sku }}</div>
+              <div class="small muted">{{ r.get('brand','') }}</div>
+            </td>
+            <td><div>{{ r.get('title','') }}</div></td>
+            <td class="nowrap">{{ r.get('ean','') }}</td>
+            <td class="nowrap">
+              {% if st == 'catalog_match' %}
+                <span class="badge ok">catalog_match</span>
+              {% elif st == 'catalog_ambiguous' %}
+                <span class="badge amb">catalog_ambiguous</span>
+              {% elif st == 'listed' %}
+                <span class="badge listed">listed</span>
+              {% else %}
+                <span class="badge not">{{ st }}</span>
+              {% endif %}
+            </td>
+            <td class="nowrap">{{ r.get('asin','') }}</td>
+            <td class="right">{{ r.get('score','') }}</td>
+            {% set cost = r.get('cost') or '' %}
+            {% set floorp = r.get('floor_price') or '' %}
+            {% set comp = r.get('competitor_price') or '' %}
+            {% set mine = r.get('selling_price') or '' %}
+            <td class="right money cell-cost">{{ cost }}</td>
+            <td class="right money cell-floor">{{ floorp }}</td>
+            <td class="right money cell-comp">{{ comp }}</td>
+            <td class="right money cell-mine">{{ mine }}</td>
+            <td class="right">
+              {% if st == 'catalog_ambiguous' %}
+                <button class="toggle" data-target="cands-{{ loop.index }}"><span class="chev">▶</span> <span>Ver candidatos</span></button>
+              {% else %}
+                <span class="muted small">—</span>
+              {% endif %}
+            </td>
+            <td class="right"><span class="small muted offer-status">—</span></td>
+          </tr>
+          {% if st == 'catalog_ambiguous' %}
+          <tr id="cands-{{ loop.index }}" class="row-cands">
+            <td colspan="13">
+              <div class="cands" data-sku="{{ sku }}" data-candidates="{{ candidates_raw | e }}">
+                <div class="muted small">Sem candidatos carregados. Usa <b>Gerar candidatos</b> no topo.</div>
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </main>
+
+  <!-- toast -->
+  <div id="toast" class="toast"></div>
+
+<script>
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2500);
+  }
+
+  // ---------- Filtro + pesquisa ----------
+  const activeStatuses = new Set(['listed','catalog_match','catalog_ambiguous']);
+  function applyFilters() {
+    const needle = (document.getElementById('q')?.value || '').trim().toLowerCase();
+    document.querySelectorAll('tbody tr.row').forEach(tr => {
+      const hay = [tr.dataset.sku, tr.dataset.asin, tr.dataset.title, tr.dataset.brand, tr.dataset.ean, tr.dataset.status].join(' ').toLowerCase();
+      const visible = hay.includes(needle) && activeStatuses.has(tr.dataset.status || '');
+      tr.style.display = visible ? '' : 'none';
+      const next = tr.nextElementSibling;
+      if (next && next.classList.contains('row-cands')) next.style.display = visible ? '' : 'none';
+    });
+    updateSelectedCount();
+  }
+  document.getElementById('q')?.addEventListener('input', applyFilters);
+  document.getElementById('filters')?.addEventListener('click', (e) => {
+    const chip = e.target.closest('.filter-chip'); if (!chip) return;
+    const val = chip.getAttribute('data-val'); if (!val) return;
+    if (chip.classList.contains('active')) { if (activeStatuses.size > 1) { chip.classList.remove('active'); activeStatuses.delete(val); } }
+    else { chip.classList.add('active'); activeStatuses.add(val); }
+    applyFilters();
+  });
+
+  // ---------- Expandir candidatos ----------
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.toggle'); if (!btn) return;
+    const id = btn.getAttribute('data-target');
+    const row = document.getElementById(id);
+    const isOpen = row.classList.contains('open');
+    row.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+    if (!isOpen && row && !row.dataset.rendered) {
+      const container = row.querySelector('.cands'); renderCandidates(container); row.dataset.rendered = '1';
+    }
+  });
+
+  function renderCandidates(container) {
+    const raw = container.getAttribute('data-candidates') || ''; let items = [];
+    try { if (raw.trim().length > 0) items = JSON.parse(raw); } catch(e) {}
+    container.innerHTML = '';
+    if (!items || items.length === 0) {
+      const p = document.createElement('div'); p.className = 'muted small';
+      p.textContent = 'Sem candidatos. Clica em “Gerar candidatos” no topo.'; container.appendChild(p); return;
+    }
+    const sku = container.getAttribute('data-sku') || '';
+    items.forEach(it => {
+      const w = document.createElement('div'); w.className = 'cand-card';
+      const h = document.createElement('h5'); h.textContent = `${it.asin || '—'}  ·  ${it.brand || ''}`; w.appendChild(h);
+      const p = document.createElement('p'); p.textContent = it.title || ''; w.appendChild(p);
+      const meta = document.createElement('div'); meta.className='small muted'; meta.textContent = `score ${it.score ?? '-'}`; w.appendChild(meta);
+      const pick = document.createElement('div'); const b = document.createElement('button'); b.className='btn'; b.textContent='Escolher este ASIN';
+      b.addEventListener('click', async () => {
+        if (!it.asin) return; b.disabled = true; b.textContent='A aplicar...';
+        try {
+          const resp = await fetch('/resolve_ambiguous', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sku, asin: it.asin }) });
+          const js = await resp.json();
+          if (js && js.success) { showToast(`SKU ${sku}: definido ASIN ${it.asin}`); setTimeout(()=>location.reload(), 600); }
+          else { showToast((js && js.error) ? js.error : 'Falhou a operação'); b.disabled=false; b.textContent='Escolher este ASIN'; }
+        } catch(e) { showToast('Erro de rede'); b.disabled=false; b.textContent='Escolher este ASIN'; }
+      }); pick.appendChild(b); w.appendChild(pick); container.appendChild(w);
+    });
+  }
+
+  // ---------- Seleção ----------
+  const chkAll = document.getElementById('chkAll');
+  chkAll?.addEventListener('change', () => {
+    document.querySelectorAll('tbody tr.row').forEach(tr => {
+      if (tr.style.display === 'none') return;
+      const cb = tr.querySelector('.chkRow'); if (cb) cb.checked = chkAll.checked;
+    });
+    updateSelectedCount();
+  });
+
+  function getVisibleRows() {
+    return Array.from(document.querySelectorAll('tbody tr.row')).filter(tr => tr.style.display !== 'none');
+  }
+  function getSelectedRows() {
+    return getVisibleRows().filter(tr => tr.querySelector('.chkRow')?.checked);
+  }
+  function updateSelectedCount() {
+    const n = getSelectedRows().length;
+    let badge = document.getElementById('selCount');
+    if (!badge) {
+      const actions = document.querySelector('.sticky-actions');
+      badge = document.createElement('span'); badge.id = 'selCount';
+      badge.className = 'badge'; badge.style.marginLeft = '8px';
+      actions.appendChild(badge);
+    }
+    badge.textContent = `Selecionados: ${n}`;
+  }
+
+  document.querySelectorAll('.chkRow').forEach(cb => cb.addEventListener('change', updateSelectedCount));
+  document.getElementById('btnSelectVisible')?.addEventListener('click', () => {
+    document.querySelectorAll('tbody tr.row').forEach(tr => {
+      if (tr.style.display === 'none') return;
+      const cb = tr.querySelector('.chkRow'); if (!cb) return;
+      const isMatch = (tr.dataset.status === 'catalog_match');
+      const notListed = (tr.dataset.listed || '').toLowerCase() !== 'yes';
+      cb.checked = (isMatch && notListed);
+    });
+    updateSelectedCount();
+    showToast('Selecionados os visíveis com catalog_match e não listed.');
+  });
+
+  document.getElementById('btnClear')?.addEventListener('click', () => {
+    document.querySelectorAll('.chkRow').forEach(cb => cb.checked = false);
+    chkAll && (chkAll.checked = false);
+    updateSelectedCount();
+  });
+
+  // ---------- Painel resultados (toggle) ----------
+  document.getElementById('resultsHeader')?.addEventListener('click', () => {
+    const box = document.getElementById('results');
+    box.classList.toggle('open');
+    const chev = box.querySelector('.chev');
+    chev.style.transform = box.classList.contains('open') ? 'rotate(0deg)' : 'rotate(-90deg)';
+  });
+
+  // ---------- Helpers seleção → backend ----------
+  async function collectSelectedSkus() {
+    const rows = getSelectedRows();
+    return rows.map(tr => tr.dataset.sku).filter(Boolean);
+  }
+  async function saveSelection(skus) {
+    const fd = new FormData(); skus.forEach(s => fd.append('selected', s));
+    await fetch('/select_products', { method: 'POST', body: fd });
+  }
+
+  // ---------- Anti-duplo-envio (cooldown 60s) ----------
+  let lastSendTs = 0;
+  async function withCooldown(btn, fn) {
+    const now = Date.now();
+    if (now - lastSendTs < 60000) { showToast('Aguarda ~1 minuto entre envios para evitar 429.'); return; }
+    lastSendTs = now;
+    btn.disabled = true; const prev = btn.textContent; btn.textContent = 'A enviar...';
+    try { await fn(); } finally { btn.disabled = false; btn.textContent = prev; }
+  }
+
+  function prependResult(kind, text) {
+    const resultsBox = document.getElementById('results');
+    const resultsList = document.getElementById('resultsList');
+    const stamp = new Date().toLocaleTimeString();
+    const div = document.createElement('div'); div.className = 'res-item';
+    div.innerHTML = `<strong>${kind}</strong> · ${stamp}<br><span class="small muted">${text}</span>`;
+    resultsList.prepend(div);
+    resultsBox.classList.add('open');
+    resultsBox.querySelector('.chev').style.transform = 'rotate(0deg)';
+  }
+
+  // ---------- Reprice (seleção) ----------
+  document.getElementById('btnReprice')?.addEventListener('click', async () => {
+    const selectedRows = getSelectedRows();
+    if (selectedRows.length === 0) { showToast('Sem SKUs selecionados.'); return; }
+
+    const skus = await collectSelectedSkus();
+    await saveSelection(skus);
+
+    let js;
+    try { const r = await fetch('/reprice_selected', { method: 'POST' }); js = await r.json(); }
+    catch(e) { showToast('Erro de rede ao repricar.'); return; }
+
+    if (!(js && js.success)) { showToast(js?.error || 'Falha no repricer.'); return; }
+
+    const bySku = {}; (js.updated || []).forEach(it => bySku[(it.sku||'').trim()] = it);
+    selectedRows.forEach(tr => {
+      const sku = (tr.dataset.sku || '').trim();
+      const it = bySku[sku]; if (!it) return;
+      tr.querySelector('.cell-comp') && (tr.querySelector('.cell-comp').textContent = (it.competitor != null ? it.competitor.toFixed(2) : ''));
+      tr.querySelector('.cell-floor') && (tr.querySelector('.cell-floor').textContent = it.floor.toFixed(2));
+      tr.querySelector('.cell-mine') && (tr.querySelector('.cell-mine').textContent = it.final.toFixed(2));
+    });
+
+    prependResult('Reprice', `Concluído para ${js.count} SKU(s).`);
+    showToast(`Reprice concluído para ${js.count} SKU(s).`);
+  });
+
+  // ---------- Criar/Atualizar OFERTAS (Listagens) ----------
+  document.getElementById('btnCreateOffers')?.addEventListener('click', async (ev) => {
+    const btn = ev.currentTarget;
+    const selectedRows = getSelectedRows();
+    if (selectedRows.length === 0) { showToast('Sem SKUs selecionados.'); return; }
+    await withCooldown(btn, async () => {
+      const skus = await collectSelectedSkus();
+      await saveSelection(skus);
+      let js;
+      try { const r = await fetch('/push_listings_selected', { method: 'POST' }); js = await r.json(); }
+      catch(e) { showToast('Erro de rede a criar ofertas.'); return; }
+      console.log('push_listings_selected →', js);
+      if (js && js.success) {
+        prependResult('Listings', `feed_id ${js.feed_id} · ${js.rows} linhas`);
+        showToast('Feed de listagens enviado.');
+      } else {
+        prependResult('Listings', js?.error || 'Falha ao criar ofertas.');
+        showToast(js?.error || 'Falha ao criar ofertas.');
+      }
+    });
+  });
+
+  // ---------- Enviar PREÇOS (Pricing XML) ----------
+  document.getElementById('btnPushPricing')?.addEventListener('click', async (ev) => {
+    const btn = ev.currentTarget;
+    const selectedRows = getSelectedRows();
+    if (selectedRows.length === 0) { showToast('Sem SKUs selecionados.'); return; }
+    await withCooldown(btn, async () => {
+      const skus = await collectSelectedSkus();
+      await saveSelection(skus);
+      let js;
+      try { const r = await fetch('/push_pricing_selected', { method: 'POST' }); js = await r.json(); }
+      catch(e) { showToast('Erro de rede no envio de pricing.'); return; }
+      console.log('push_pricing_selected →', js);
+      if (js && js.success) {
+        prependResult('Pricing', `feed_id ${js.feed_id} · ${js.rows} linhas`);
+        showToast(`Pricing enviado (${js.rows} linhas).`);
+      } else {
+        prependResult('Pricing', js?.error || 'Falha no envio de pricing.');
+        showToast(js?.error || 'Falha no envio de pricing.');
+      }
+    });
+  });
+
+  // ---------- Enviar STOCK (Inventory TSV) ----------
+  document.getElementById('btnPushInventory')?.addEventListener('click', async (ev) => {
+    const btn = ev.currentTarget;
+    const selectedRows = getSelectedRows();
+    if (selectedRows.length === 0) { showToast('Sem SKUs selecionados.'); return; }
+    await withCooldown(btn, async () => {
+      const skus = await collectSelectedSkus();
+      await saveSelection(skus);
+      let js;
+      try { const r = await fetch('/push_inventory_selected', { method: 'POST' }); js = await r.json(); }
+      catch(e) { showToast('Erro de rede no envio de inventory.'); return; }
+      console.log('push_inventory_selected →', js);
+      if (js && js.success) {
+        prependResult('Inventory', `feed_id ${js.feed_id} · ${js.rows} linhas`);
+        showToast(`Inventory enviado (${js.rows} linhas).`);
+      } else {
+        prependResult('Inventory', js?.error || 'Falha no envio de inventory.');
+        showToast(js?.error || 'Falha no envio de inventory.');
+      }
+    });
+  });
+
+  // aplica filtros no load + contador inicial
+  applyFilters();
+  updateSelectedCount();
+</script>
+</body>
+</html>

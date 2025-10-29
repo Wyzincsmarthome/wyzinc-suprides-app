@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <title>Amazon Overview</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+    th { background: #f6f6f6; position: sticky; top: 0; }
+    input[type="text"] { padding:6px 8px; width: 280px; }
+    .toolbar { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+  </style>
+  <script>
+    function filterRows() {
+      const q = document.getElementById('q').value.toLowerCase();
+      document.querySelectorAll('tbody tr').forEach(tr => {
+        const t = tr.innerText.toLowerCase();
+        tr.style.display = t.includes(q) ? '' : 'none';
+      });
+    }
+  </script>
+</head>
+<body>
+  <h1>Amazon Overview</h1>
+  <div class="toolbar">
+    <a href="/">← Voltar</a>
+    <a href="/fetch_amazon_data">Atualizar Overview</a>
+    <input id="q" type="text" placeholder="Filtrar..." oninput="filterRows()">
+  </div>
+  <table>
+    <thead>
+      <tr>
+        {% for c in cols %}
+        <th>{{ c }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        {% for c in cols %}
+          {% if c == 'asin' and r.get(c) %}
+            <td><a href="/asin_offers?asin={{ r.get(c) }}" target="_blank">{{ r.get(c) }}</a></td>
+          {% else %}
+            <td>{{ r.get(c, '') }}</td>
+          {% endif %}
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <title>Classificação Suprides</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root{
+            --topbar-h: 58px;
+            --filters-h: 0px;
+            --sticky-offset: calc(var(--topbar-h) + var(--filters-h));
+            --bg: #0f1620;
+            --bg-soft: #131c28;
+            --fg: #e6e8ee;
+            --muted: #9aa3af;
+            --chip: #1a2432;
+            --chip-border: #253142;
+            --accent: #3b82f6;
+            --accent-weak: #2a5fb8;
+            --row-alt: #101a26;
+            --row-hover: #162233;
+            --border: #243247;
+        }
+        * { box-sizing: border-box; }
+        html, body{
+            margin:0;
+            height:100%;
+            background: var(--bg);
+            color: var(--fg);
+            font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+        }
+
+        .topbar{
+            position: sticky; top: 0; z-index: 30;
+            background: linear-gradient(180deg, rgba(15,22,32,0.96), rgba(15,22,32,0.96));
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 12px; display: flex; gap: 12px; align-items: center; min-height: var(--topbar-h);
+        }
+        .topbar h1{ font-size: 18px; margin: 0 14px 0 2px; font-weight: 600; color: #eaf0ff; }
+        .btn{ background: var(--accent); border: 1px solid var(--accent-weak); color: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn.ghost{ background: transparent; color: var(--fg); border: 1px solid var(--chip-border); }
+        .btn:disabled{ opacity: .6; cursor: not-allowed; }
+        .spacer{ flex: 1; }
+        .filters-wrap{ position: sticky; top: var(--topbar-h); z-index: 20; background: linear-gradient(180deg, rgba(16,24,36,0.95), rgba(16,24,36,0.95)); border-bottom: 1px solid var(--border); overflow: clip; transition: height .18s ease, padding .18s ease, border-color .18s ease; }
+        .filters-inner{ padding: 10px 12px 12px 12px; }
+        .filters-grid{ display: grid; grid-template-columns: 1fr 380px; gap: 10px; align-items: center; }
+        .search{ background: var(--bg-soft); border: 1px solid var(--chip-border); padding: 9px 10px; border-radius: 8px; width: 100%; color: var(--fg); }
+        .chips{ display: flex; flex-wrap: wrap; gap: 8px; max-height: 140px; overflow: auto; padding-top: 8px; }
+        .chip{ padding: 6px 10px; background: var(--chip); border: 1px solid var(--chip-border); border-radius: 20px; color: var(--fg); white-space: nowrap; cursor: pointer; user-select: none; }
+        .chip.active{ border-color: var(--accent); background: #102342; color: #dce9ff; }
+        .table-wrap{ position: relative; }
+        table{ width: 100%; border-collapse: separate; border-spacing: 0; }
+        thead th{ position: sticky; top: var(--sticky-offset); z-index: 10; background: var(--bg); border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; font-weight: 700; }
+        tbody td{ border-bottom: 1px solid var(--border); padding: 10px 8px; vertical-align: middle; }
+        tbody tr:nth-child(2n){ background: var(--row-alt); }
+        tbody tr:hover{ background: var(--row-hover); }
+        .col-check{ width: 38px; }
+        .col-sku{ width: 140px; }
+        .col-ean{ width: 170px; }
+        .col-brand{ width: 120px; }
+        .col-status{ width: 120px; }
+        .col-asin{ width: 160px; white-space: nowrap; }
+        .col-num{ text-align: right; white-space: nowrap; }
+        .summary{ color: var(--muted); padding: 8px 12px; font-size: 13px; border-top: 1px solid var(--border); }
+        .filters-wrap.compact{ height: 0 !important; padding: 0 !important; border-bottom-color: transparent; }
+        .title{ max-width: 520px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        a { color: #8ab4ff; text-decoration: none; } a:hover { text-decoration: underline; }
+        input[type="checkbox"]{ width: 16px; height: 16px; }
+        .muted{ color: var(--muted); }
+
+        .pager { display:flex; flex-wrap:wrap; gap:6px; margin:12px; }
+        .pager a, .pager span { padding:6px 10px; border:1px solid #2a394f; border-radius:6px; text-decoration:none; color:#e6e8ee; }
+        .pager .current { background:#2a394f; border-color:#2a394f; }
+        .pagectl { display:flex; align-items:center; gap:8px; padding:8px 12px; }
+        .pagectl select { background: var(--bg-soft); color: var(--fg); border:1px solid var(--chip-border); border-radius:6px; padding:6px 8px; }
+
+        .search-row{ display:flex; gap:8px; align-items:center; }
+    </style>
+</head>
+<body>
+
+    <div class="topbar" id="topBar">
+        <h1>Classificação Suprides</h1>
+        <button class="btn ghost" onclick="location.href='/suprides/classify'">Reclassificar</button>
+        <button class="btn ghost" onclick="location.href='/suprides/review_classified'">Recarregar</button>
+        <button class="btn" id="btnEnrichSelected">Atualizar preço concorrência (selecionados)</button>
+        <button class="btn ghost" id="btnEnrichAll">Atualizar preço concorrência (tabela)</button>
+        <button class="btn" id="btnPushSelected" title="Atualiza preço e stock no catálogo Amazon">Enviar para Amazon (selecionados)</button>
+        <div class="spacer"></div>
+        <span class="muted">Total: {{ meta.total or 0 }} | catalog_ambiguous: {{ meta.catalog_ambiguous or 0 }} | catalog_match: {{ meta.catalog_match or 0 }} | listed: {{ meta.listed or 0 }} | missing_ean: {{ meta.missing_ean or 0 }} | not_found: {{ meta.not_found or 0 }}</span>
+    </div>
+
+    <div class="filters-wrap" id="filtersWrap">
+        <div class="filters-inner">
+            <div class="filters-grid">
+                <div class="search-row">
+                    <input id="searchBox" class="search" placeholder="Pesquisar por SKU, ASIN, nome, marca ou EAN…">
+                    <button class="btn" id="btnSearch" title="Pesquisa global">Pesquisar</button>
+                </div>
+                <div class="muted" id="liveCounter">A filtrar tabela…</div>
+            </div>
+            <div class="chips" style="margin-top:8px;">
+                {% for tag in ['catalog_ambiguous','catalog_match','listed','missing_ean','not_found'] %}
+                    <span class="chip" data-chip="{{ tag|trim }}">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            <div class="chips" id="brandChips">
+                {% for b in brands %}
+                    <span class="chip" data-brand="{{ b|default('')|trim }}">{{ b }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="pagectl">
+        {% set ps = (request.args.get('page_size', meta.page_size if meta else 100)) %}
+        <form id="pagerForm" method="get" action="{{ url_for('suprides.suprides_review_classified') }}" style="display:flex; gap:8px; align-items:center; margin:0;">
+            <label class="muted">Por página</label>
+            <select id="pageSizeSelect" name="page_size" onchange="document.getElementById('pageHidden').value=1; this.form.submit()">
+                {% for size in [50,100,200,500,1000] %}
+                  <option value="{{ size }}" {% if ps|string == size|string %}selected{% endif %}>{{ size }}</option>
+                {% endfor %}
+            </select>
+            <input type="hidden" id="brandsHidden" name="brand"  value="{{ request.args.get('brand','') }}">
+            <input type="hidden" id="statusesHidden" name="status" value="{{ request.args.get('status','') }}">
+            <input type="hidden" id="qHidden"       name="q"      value="{{ request.args.get('q','') }}">
+            <input type="hidden" id="pageHidden"    name="page"   value="{{ request.args.get('page', meta.page if meta else 1) }}">
+        </form>
+        <span class="muted">Página {{ meta.page or 1 }} de {{ meta.pages or 1 }}</span>
+    </div>
+
+    <div class="table-wrap">
+        <table id="tbl">
+            <thead>
+                <tr>
+                    <th class="col-check"><input type="checkbox" id="checkAll"></th>
+                    <th class="col-sku">SKU</th>
+                    <th class="col-ean">EAN</th>
+                    <th class="col-brand">Marca</th>
+                    <th>Título</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-asin">ASIN</th>
+                    <th class="col-num">Stock</th>
+                    <th class="col-num">Custo (€)</th>
+                    <th class="col-num">Concorrência (€)</th>
+                    <th class="col-num">Floor (€)</th>
+                    <th class="col-num">Preço Final (€)</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                {% for r in rows %}
+                <tr data-brand="{{ r.brand|default('')|trim }}" data-status="{{ r.status|default('')|trim }}">
+                    <!-- NOVO: data-sku + data-asin no checkbox -->
+                    <td class="col-check">
+                        <input type="checkbox" class="chk" data-sku="{{ r.sku }}" data-asin="{{ r.asin|upper }}">
+                    </td>
+                    <td class="col-sku">{{ r.sku }}</td>
+                    <td class="col-ean">{{ r.ean }}</td>
+                    <td class="col-brand">{{ r.brand }}</td>
+                    <td><div class="title">{{ r.title }}</div></td>
+                    <td class="col-status">{{ r.status }}</td>
+                    <td class="col-asin">{% if r.asin %}<a href="https://www.amazon.es/dp/{{ r.asin }}" target="_blank" rel="noopener">{{ r.asin }}</a>{% endif %}</td>
+                    <td class="col-num">{{ r.stock }}</td>
+                    <td class="col-num">{{ r.cost }}</td>
+                    <td class="col-num">{{ r.competitor_price }}</td>
+                    <td class="col-num">{{ r.floor_price }}</td>
+                    <td class="col-num">{{ r.selling_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if meta and meta.pages and meta.pages > 1 %}
+      <div class="pager" id="pager">
+        {% for p in range(1, meta.pages + 1) %}
+          {% if p == meta.page %}
+            <span class="current" data-page="{{ p }}">{{ p }}</span>
+          {% else %}
+            <a href="{{ url_for('suprides.suprides_review_classified', page=p, page_size=ps) }}" data-page="{{ p }}">{{ p }}</a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="summary">
+        <strong>Contagem:</strong>
+        total {{ meta.total or 0 }},
+        catalog_ambiguous {{ meta.catalog_ambiguous or 0 }},
+        catalog_match {{ meta.catalog_match or 0 }},
+        listed {{ meta.listed or 0 }},
+        missing_ean {{ meta.missing_ean or 0 }},
+        not_found {{ meta.not_found or 0 }}
+    </div>
+
+    <script>
+    function throttle(fn, wait){
+        let t=0, last=0, savedArgs=null, savedThis=null;
+        return function(...args){
+            const now=Date.now();
+            savedArgs=args; savedThis=this;
+            if(now - last >= wait){
+                last=now; fn.apply(savedThis, savedArgs); savedArgs=savedThis=null;
+            }else{
+                clearTimeout(t);
+                t=setTimeout(()=>{ last=Date.now(); fn.apply(savedThis, savedArgs); savedArgs=savedThis=null; }, wait - (now-last));
+            }
+        }
+    }
+
+    function recomputeOffsets(){
+        const topBar = document.getElementById('topBar');
+        const filtersWrap = document.getElementById('filtersWrap');
+        const topH = Math.max(56, Math.round(topBar.getBoundingClientRect().height));
+        let filtH = 0;
+        if(!filtersWrap.classList.contains('compact')){
+            filtH = Math.round(filtersWrap.scrollHeight);
+        }
+        document.documentElement.style.setProperty('--topbar-h', topH + 'px');
+        document.documentElement.style.setProperty('--filters-h', filtH + 'px');
+        document.documentElement.style.setProperty('--sticky-offset', `calc(${topH}px + ${filtH}px)`);
+    }
+    const onScroll = throttle(function(){
+        const filtersWrap = document.getElementById('filtersWrap');
+        const scY = window.scrollY || document.documentElement.scrollTop || 0;
+        const wantCompact = scY > 80;
+        if(wantCompact !== filtersWrap.classList.contains('compact')){
+            filtersWrap.classList.toggle('compact', wantCompact);
+            recomputeOffsets();
+        }
+    }, 50);
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', throttle(recomputeOffsets, 100));
+    window.addEventListener('load', recomputeOffsets);
+
+    document.getElementById('checkAll').addEventListener('change', function(){
+        document.querySelectorAll('.chk').forEach(ch => ch.checked = this.checked);
+    });
+
+    document.getElementById('btnEnrichSelected').addEventListener('click', async function(){
+        const asins = Array.from(document.querySelectorAll('.chk:checked'))
+                      .map(x => (x.dataset.asin || '').trim())
+                      .filter(Boolean);
+        if(asins.length === 0){ alert('Nada seleccionado.'); return; }
+        this.disabled = true;
+        try{
+            const res = await fetch('/suprides/enrich_competitive', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ asins })
+            });
+            const data = await res.json();
+            alert(`Recebidos: ${data.received}, Atualizados: ${data.updated}`);
+            location.reload();
+        }catch(e){ alert('Falha a atualizar.'); }
+        finally{ this.disabled = false; }
+    });
+
+    document.getElementById('btnEnrichAll').addEventListener('click', async function(){
+        const asins = Array.from(document.querySelectorAll('tbody .chk'))
+                      .map(x => (x.dataset.asin || '').trim())
+                      .filter(Boolean);
+        if(asins.length === 0){ alert('Nada na tabela.'); return; }
+        this.disabled = true;
+        try{
+            const res = await fetch('/suprides/enrich_competitive', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ asins })
+            });
+            const data = await res.json();
+            alert(`Recebidos: ${data.received}, Atualizados: ${data.updated}`);
+            location.reload();
+        }catch(e){ alert('Falha a atualizar.'); }
+        finally{ this.disabled = false; }
+    });
+
+    // NOVO: enviar selecionados para Amazon — envia SKUs; backend aceita SKUs e/ou ASINs
+    document.getElementById('btnPushSelected').addEventListener('click', async function(){
+        const skus  = Array.from(document.querySelectorAll('.chk:checked'))
+                      .map(x => (x.dataset.sku || '').trim())
+                      .filter(Boolean);
+        if (skus.length === 0) { alert('Seleciona pelo menos um produto.'); return; }
+        if (!confirm(`Enviar ${skus.length} produto(s) para a Amazon?`)) return;
+
+        this.disabled = true;
+        try{
+            const res = await fetch('/suprides/push_selected', {
+                method: 'POST',
+                headers: { 'Content-Type':'application/json' },
+                body: JSON.stringify({ skus })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                const lines = [
+                    `Enviados: ${data.count}`,
+                    ...((data.submitted||[]).map(x => `Feed ${x.type}: ${x.feedId}`))
+                ];
+                alert(lines.join('\\n'));
+            } else {
+                alert(`Falhou o envio: ${data.message || 'erro inesperado'}`);
+            }
+        } catch(e){
+            alert('Falha a comunicar com o servidor.');
+        } finally {
+            this.disabled = false;
+        }
+    });
+
+    const form       = document.getElementById('pagerForm');
+    const hidBrand   = document.getElementById('brandsHidden');
+    const hidStatus  = document.getElementById('statusesHidden');
+    const hidQ       = document.getElementById('qHidden');
+    const hidPage    = document.getElementById('pageHidden');
+
+    const initBrandsCsv  = {{ (request.args.get('brand','')|lower)|tojson }};
+    const initStatusCsv  = {{ (request.args.get('status','')|lower)|tojson }};
+    const initQ          = {{ (request.args.get('q',''))|tojson }};
+    let activeBrands = new Set(initBrandsCsv ? initBrandsCsv.split(',').filter(Boolean) : []);
+    let activeStatus = new Set(initStatusCsv ? initStatusCsv.split(',').filter(Boolean) : []);
+    if (initQ) document.getElementById('searchBox').value = initQ;
+
+    document.querySelectorAll('.chip[data-brand]').forEach(el=>{
+        const key = (el.dataset.brand || '').trim().toLowerCase();
+        if(activeBrands.has(key)) el.classList.add('active');
+    });
+    document.querySelectorAll('.chip[data-chip]').forEach(el=>{
+        const key = (el.dataset.chip || '').trim().toLowerCase();
+        if(activeStatus.has(key)) el.classList.add('active');
+    });
+
+    function submitWithState(){
+        hidBrand.value  = Array.from(activeBrands).join(',');
+        hidStatus.value = Array.from(activeStatus).join(',');
+        hidPage.value   = '1';
+        form.submit();
+    }
+
+    document.querySelectorAll('.chip[data-chip]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+            const key = (el.dataset.chip || '').trim().toLowerCase();
+            if(el.classList.toggle('active')) activeStatus.add(key); else activeStatus.delete(key);
+            submitWithState();
+        });
+    });
+
+    document.querySelectorAll('.chip[data-brand]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+            const key = (el.dataset.brand || '').trim().toLowerCase();
+            if(el.classList.toggle('active')) activeBrands.add(key); else activeBrands.delete(key);
+            submitWithState();
+        });
+    });
+
+    const searchBox = document.getElementById('searchBox');
+    const btnSearch = document.getElementById('btnSearch');
+    function doGlobalSearch(){
+        hidQ.value   = (searchBox.value || '').trim();
+        hidPage.value = '1';
+        submitWithState();
+    }
+    searchBox.addEventListener('keydown', function(ev){
+        if (ev.key === 'Enter'){
+            ev.preventDefault();
+            doGlobalSearch();
+        }
+    });
+    btnSearch.addEventListener('click', function(ev){
+        ev.preventDefault();
+        doGlobalSearch();
+    });
+
+    const tbodyRef = document.getElementById('tbody');
+    const liveCounter = document.getElementById('liveCounter');
+    function applyLocalFilter(){
+        const q = (searchBox.value || '').trim().toLowerCase();
+        let shown = 0;
+        tbodyRef.querySelectorAll('tr').forEach(tr=>{
+            const brand = ((tr.dataset.brand || '').trim().toLowerCase());
+            const status = ((tr.dataset.status || '').trim().toLowerCase());
+            const text = tr.innerText.toLowerCase();
+            const passQ = !q || text.includes(q);
+            const passS = activeStatus.size===0 || activeStatus.has(status);
+            const passB = activeBrands.size===0 || activeBrands.has(brand);
+            const v = passQ && passS && passB;
+            tr.style.display = v ? '' : 'none';
+            if(v) shown++;
+        });
+        liveCounter.textContent = `A mostrar ${shown} linhas`;
+    }
+    document.getElementById('searchBox').addEventListener('input', throttle(applyLocalFilter, 120));
+    applyLocalFilter();
+
+    (function fixPagerLinks(){
+        const pager = document.getElementById('pager');
+        if(!pager) return;
+        const ps = document.getElementById('pageSizeSelect')?.value || '{{ meta.page_size if meta else 100 }}';
+        const q  = hidQ.value || '';
+        const br = hidBrand.value || '';
+        const st = hidStatus.value || '';
+        pager.querySelectorAll('a[href]').forEach(a=>{
+            const url = new URL(a.href, location.origin);
+            url.searchParams.set('page_size', ps);
+            if (q)  url.searchParams.set('q', q); else url.searchParams.delete('q');
+            if (br) url.searchParams.set('brand', br); else url.searchParams.delete('brand');
+            if (st) url.searchParams.set('status', st); else url.searchParams.delete('status');
+            a.href = url.toString();
+        });
+    })();
+
+    window.addEventListener('load', function(){
+        const clean = "{{ url_for('suprides.suprides_review_classified') }}";
+        if (location.search) {
+            history.replaceState(null, '', clean);
+        }
+    });
+    </script>
+</body>
+</html>

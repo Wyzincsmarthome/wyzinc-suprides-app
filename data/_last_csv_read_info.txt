@@ -1,0 +1,31 @@
+OK {'sep': ';', 'encoding': 'utf-8'}
+
+Colunas RAW:
+name, image_path, stock, msrp, brand, description, specifications, content, short_description, short_description_html, category, category_parent, precio_neto_compra, precio_venta_cliente_final, PVP, ean, published, created, modified, params, related_products, extra_images_paths, category_id, on_request
+
+Amostra mapeada SEM filtro (5 linhas):
+sku,brand,title,ean,cost,stock
+4823114017469,AJAX,10XAJ-BRANDPLATES-B,4823114017469,41.0,10
+4823114017476,AJAX,10XAJ-BRANDPLATES-W,4823114017476,41.0,10
+4823114056215,AJAX,10XAJ-KEYMCP,4823114056215,5.0,10
+10XAJ-TAG-B,AJAX,10XAJ-TAG-B,,27.26,10
+10XAJ-TAG-W,AJAX,10XAJ-TAG-W,,27.26,10
+
+
+Estatísticas SEM filtro:
+Linhas totais: 6021
+Brands top:
+brand
+MARCA BLANCA       820
+HIKVISION          517
+SAFIRE             385
+HIKVISION PRO      339
+AJAX               335
+X-SECURITY         287
+HIKVISION VALUE    283
+SAFIRE SMART       267
+ZKTECO             202
+REYEE              177
+
+Estatísticas COM filtro:
+Linhas após filtro de marcas: 412

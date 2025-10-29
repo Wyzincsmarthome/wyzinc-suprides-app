@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <title>{{ label }}</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+    th { background: #f6f6f6; position: sticky; top: 0; }
+    .toolbar { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+    .muted { color:#666; }
+    button { padding: 8px 14px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; }
+    label { user-select: none; }
+  </style>
+  <script>
+    function toggleAll(source) {
+      const boxes = document.querySelectorAll('input[name="selected"]');
+      boxes.forEach(b => b.checked = source.checked);
+    }
+  </script>
+</head>
+<body>
+  <h1>{{ label }}</h1>
+
+  {% if error %}
+    <p class="muted">{{ error }}</p>
+  {% endif %}
+
+  <div class="toolbar">
+    <a href="/">← Voltar</a>
+    <a href="/review_data">Processados</a>
+    <a href="/review_data?raw=1">Mapeados (sem filtro)</a>
+    <form action="/reprice_selected" method="post" style="margin-left:auto;">
+      <button type="submit">Repreço concorrência</button>
+    </form>
+  </div>
+
+  <form action="/select_products" method="post">
+    <p class="muted">Selecionados atualmente: {{ selected|length }}</p>
+    <label><input type="checkbox" onclick="toggleAll(this)"> Selecionar todos nesta página</label>
+    <button type="submit">Guardar seleção</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>SKU</th>
+          <th>Marca</th>
+          <th>Título</th>
+          <th>EAN</th>
+          <th>Custo</th>
+          <th>Stock</th>
+          <th>Floor</th>
+          <th>Preço</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td>
+            <input type="checkbox" name="selected" value="{{ r.get('sku','') }}"
+                   {% if r.get('sku','') in selected %}checked{% endif %}>
+          </td>
+          <td>{{ r.get('sku','') }}</td>
+          <td>{{ r.get('brand','') }}</td>
+          <td>{{ r.get('title','') }}</td>
+          <td>{{ r.get('ean','') }}</td>
+          <td>{{ r.get('cost','') }}</td>
+          <td>{{ r.get('stock','') }}</td>
+          <td>{{ r.get('floor_price','') }}</td>
+          <td>{{ r.get('selling_price','') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="submit" style="margin-top:12px;">Guardar seleção</button>
+  </form>
+</body>
+</html>

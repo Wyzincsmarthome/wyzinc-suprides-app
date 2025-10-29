@@ -50,11 +50,7 @@ os.makedirs("logs", exist_ok=True)
 SETTINGS_FILE = "data/settings.json"
 SELECTED_SKUS_FILE = "data/selected_skus.json"
 
-# ----------------------- Helpers ---------------------------
-@app.route("/health")
-def health():
-    return "ok", 200
-    
+# ----------------------- Helpers ---------------------------    
 @app.post("/reprice_selected")
 def reprice_selected():
     """
@@ -183,6 +179,14 @@ def _fallback_table(rows: list, cols: list, title: str) -> str:
 
 
 # ------------------------ UI -------------------------------
+@app.route("/health")
+def health():
+    return "ok", 200
+
+@app.route("/")
+def index():
+    return redirect("/suprides/review_classified", code=302)
+
 @app.route("/")
 def index():
     cfg = load_cfg()

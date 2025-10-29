@@ -20,7 +20,7 @@ app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET", "change_me")
 
 # -------------------------- Imports locais (rotas, etc.) -----------------
 from amazon_client import AmazonClient
-from suprides_identify import classify_suprides_products  # novo: classificação de produtos Suprides
+# do NOT importar aqui de novo classify_suprides_products (fica mais abaixo no try/except)
 from auto_product_type import AutoPT
 from csv_processor_visiotech import process_csv, load_cfg
 from product_identify import classify_products
@@ -30,17 +30,15 @@ from inventory_sync import refresh_inventory
 from app_suprides import bp as suprides_bp  # blueprint da Suprides
 from pricing_engine import calc_final_price
 
-# Importação da função de classificação da Suprides.
-# Esta função normaliza os produtos, calcula preços e resolve o estado catalog_match/catalog_ambiguous/listed.
+# Importação da função de classificação da Suprides (protegida)
 try:
-    from suprides_identify import classify_suprides_products
+    from suprides_identify import classify_suprides_products  # normaliza, calcula preços e estados
 except Exception:
-    # Suporte a ambiente onde o módulo ainda não existe. A função será usada apenas se estiver presente.
     classify_suprides_products = None
 
 # -------------------------- Registar blueprints UMA vez -------------------
-app.register_blueprint(bp_enrich)     # já existia no teu projeto
-app.register_blueprint(suprides_bp, url_prefix="/suprides")   # novo blueprint da Suprides
+app.register_blueprint(bp_enrich)                       # já existia no teu projeto
+app.register_blueprint(suprides_bp, url_prefix="/suprides")   # blueprint da Suprides com prefixo
 
 # -------------------------- Pastas e ficheiros ----------------------------
 os.makedirs("data", exist_ok=True)
@@ -49,6 +47,11 @@ os.makedirs("logs", exist_ok=True)
 
 SETTINGS_FILE = "data/settings.json"
 SELECTED_SKUS_FILE = "data/selected_skus.json"
+
+# -------------------------- Healthcheck ----------------------------
+@app.route("/healthz")
+def healthz():
+    return "ok", 200
 
 # ----------------------- Helpers ---------------------------    
 @app.post("/reprice_selected")
@@ -179,7 +182,7 @@ def _fallback_table(rows: list, cols: list, title: str) -> str:
 
 
 # ------------------------ UI -------------------------------
-@app.route("/")
+@app.route("/", endpoint="root_index")
 def index():
     cfg = load_cfg()
     stats = {
@@ -208,11 +211,10 @@ def index():
             ("/debug/mapping_selected", "DEBUG: mapping seleção"),
             ("/actions/select_by_skus?skus=SKU1,SKU2", "Selecionar SKUs via URL"),
             ("/actions/clear_selection", "Limpar seleção"),
+            ("/suprides/review_classified", "Suprides — classificados"),
         ]
         a = "".join([f"<li><a href='{u}'>{t}</a></li>" for u,t in links])
         return f"<h1>App — UI básica</h1><ul>{a}</ul><pre>{json.dumps(stats, ensure_ascii=False, indent=2)}</pre>"
-        return redirect("/suprides/review_classified", code=302)
-
 
 # ------------------ Suprides Classification ------------------
 @app.route("/suprides/classify")
@@ -343,7 +345,7 @@ def upload_csv():
 def toggle_simulate():
     val = bool(request.form.get("simulate") in ("1", "true", "on", "yes"))
     _set_simulate_flag(val)
-    return redirect(url_for("index"))
+    return redirect(url_for("root_index"))
 
 
 # ---------------- CLASSIFY (robusto, por EAN) ---------------
@@ -381,10 +383,9 @@ def _classify_core(client: AmazonClient, ean: str):
         return False
 
     matched = [it for it in items if isinstance(it, dict) and item_has_ean(it)]
-    if not matched:
+    asins = list({str((it.get("asin") or "")).upper() for it in matched if it.get("asin")}) if matched else []
+    if not matched or not asins:
         return jsonify(success=True, classification="no_match", asin_candidates=[], raw=res), 200
-
-    asins = list({str((it.get("asin") or "")).upper() for it in matched if it.get("asin")})
     if len(asins) == 1:
         return jsonify(success=True, classification="catalog_match", asin_candidates=asins, raw=res), 200
     else:
@@ -1004,4 +1005,5 @@ def offer_only_auto_by_asin():
 # --------------------------- Main --------------------------
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
-    app.run(port=port, debug=(os.getenv("ENV", "dev") != "prod"))
+    # Local only: sem reloader (evita duplicar rotas). No Render, usas waitress-serve.
+    app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)

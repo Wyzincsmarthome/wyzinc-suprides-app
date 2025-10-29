@@ -15,6 +15,7 @@ from suprides_client import SupridesClient
 from supplier_suprides import normalize  # devolve: sku, ean, brand, name, price_cost, qty_available
 from amazon_client import AmazonClient
 from pricing_engine import calc_final_price
+from storage import get_storage  # <<< NOVO: abstração de I/O (local vs S3)
 
 log = logging.getLogger("suprides_identify")
 if not log.handlers:
@@ -27,11 +28,9 @@ DEFAULT_MARKETPLACE_ID = os.environ.get("DEFAULT_MARKETPLACE_ID", "").strip() or
 MARKETPLACE_ID = os.environ.get("MARKETPLACE_ID", DEFAULT_MARKETPLACE_ID)
 SELLER_ID = os.environ.get("SELLER_ID", "").strip()
 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(APP_ROOT, "data")
-os.makedirs(DATA_DIR, exist_ok=True)
-CLASSIFIED_CSV = os.path.join(DATA_DIR, "suprides_classified.csv")
-
+# Persistência: agora feita via storage (S3 em prod; disco em local)
+# Ficheiro final padronizado
+CLASSIFIED_NAME = "suprides_classified.csv"
 
 def _s(x) -> str:
     try:
@@ -75,19 +74,17 @@ else:
 _BRAND_BLOCK_KEYS = {_canon_brand(x) for x in _BRAND_BLOCKLIST}
 
 # -----------------------
-# STOCK MAPPING (garantido na saída)
+# STOCK MAPPING (garantido na saída, sem exceções)
+# Regra exigida:
+#   qty <= 0 -> 0
+#   qty < 2  -> 1
+#   qty < 10 -> 5
+#   qty >=10 -> 10
 # -----------------------
 _STOCK_LABELS_ZERO = {"0", "oos", "outofstock", "semstock", "sem_estoque", "semestoque", "no", "false"}
 
-def _map_stock_value(v) -> int:
-    """
-    Garante o mapping:
-      0 -> 0
-      <2 -> 1
-      <10 -> 5
-      >10 -> 10
-    Se for numérico (e.g., 3), respeita o valor (>=0).
-    """
+def _parse_qty_to_int(v) -> int:
+    """Extrai um inteiro não negativo a partir de qualquer valor textual/numérico."""
     if v is None:
         return 0
     s = str(v).strip()
@@ -96,12 +93,6 @@ def _map_stock_value(v) -> int:
     ss = s.lower().replace(" ", "")
     if ss in _STOCK_LABELS_ZERO:
         return 0
-    if ss in {"<2", "≤2", "le2"}:
-        return 1
-    if ss in {"<10", "≤10", "le10"}:
-        return 5
-    if ss in {">10", "≥10", "ge10", "10+", ">9"}:
-        return 10
     # tenta numérico direto
     try:
         return max(0, int(float(s.replace(",", "."))))
@@ -116,7 +107,19 @@ def _map_stock_value(v) -> int:
             return 0
     return 0
 
+def _remap_stock_discrete(qty: int) -> int:
+    """Aplica a regra 0/1/5/10 exatamente como definido."""
+    if qty <= 0:
+        return 0
+    if qty < 2:
+        return 1
+    if qty < 10:
+        return 5
+    return 10
 
+# -----------------------
+# Catalog pick
+# -----------------------
 def _choose_best_catalog_item(items: List[Dict[str, Any]], supplier_brand: str) -> Tuple[str | None, str]:
     """
     Recebe a resposta do Catalog (search por EAN) e devolve (asin, status_base)
@@ -162,7 +165,9 @@ def _choose_best_catalog_item(items: List[Dict[str, Any]], supplier_brand: str) 
         return ranked[0][1], "catalog_match"
     return None, "catalog_ambiguous"
 
-
+# -----------------------
+# Principal
+# -----------------------
 def classify_suprides_products(simulate: bool = False) -> pd.DataFrame:
     """
     1) Lê catálogo do fornecedor (Suprides) e normaliza: sku, ean, brand, name, price_cost, qty_available
@@ -173,12 +178,12 @@ def classify_suprides_products(simulate: bool = False) -> pd.DataFrame:
             * se teu SELLER_ID aparece -> status=listed
             * competitor_price = menor landed que NÃO seja teu seller
         - calcula floor/final via pricing_engine
-    3) Grava CSV com colunas completas para a UI.
+    3) Grava CSV SÓ com stock 0/1/5/10 via storage (S3 em prod; disco em local).
     """
-    os.makedirs(DATA_DIR, exist_ok=True)
+    storage = get_storage()
 
     sup = SupridesClient()
-    ac = AmazonClient(simulate=False)
+    ac = AmazonClient(simulate=False if not simulate else True)
 
     rows: List[Dict[str, Any]] = []
 
@@ -190,8 +195,12 @@ def classify_suprides_products(simulate: bool = False) -> pd.DataFrame:
         brand = base.get("brand", "")
         title = base.get("name", "")
         cost = _pfloat(base.get("price_cost"))
-        # força mapping de stock aqui, independentemente do upstream
-        stock = _map_stock_value(base.get("qty_available"))
+
+        # Apurar quantidade numérica bruta do fornecedor
+        qty_raw = base.get("qty_available")
+        qty_num = _parse_qty_to_int(qty_raw)
+        # Aplicar mapping final SEMPRE para 0/1/5/10
+        stock = _remap_stock_discrete(qty_num)
 
         # ---- filtro de marcas a ignorar (acelera o processo) ----
         if _canon_brand(brand) in _BRAND_BLOCK_KEYS:
@@ -289,7 +298,11 @@ def classify_suprides_products(simulate: bool = False) -> pd.DataFrame:
     df.sort_values(["__ord", "brand", "title"], inplace=True)
     df.drop(columns=["__ord"], inplace=True)
 
-    tmp = CLASSIFIED_CSV + ".tmp"
-    df.to_csv(tmp, index=False)
-    os.replace(tmp, CLASSIFIED_CSV)
+    # Garante as colunas pedidas no CSV final em primeiro lugar
+    desired = ["sku","ean","brand","title","cost","stock","asin","status","competitor_price","floor_price","selling_price"]
+    cols = [c for c in desired if c in df.columns] + [c for c in df.columns if c not in desired]
+    df = df[cols]
+
+    # Persistir via storage (S3 em prod; disco em local)
+    storage.write_csv(CLASSIFIED_NAME, df.to_dict(orient="records"))
     return df

@@ -254,8 +254,33 @@ def _job_status_storage_key():
     return "jobs/suprides_classify_status.json"
 
 def _save_job_state():
+    from storage import get_storage
     storage = get_storage()
-    storage.write_json(_job_status_storage_key(), {
+    try:
+        storage.write_json(_job_status_storage_key(), {
+            "running": JOB_STATE["running"],
+            "started_at": JOB_STATE["started_at"],
+            "finished_at": JOB_STATE["finished_at"],
+            "progress": JOB_STATE["progress"],
+            "total": JOB_STATE["total"],
+            "error": JOB_STATE["error"],
+            "ts": datetime.utcnow().isoformat() + "Z",
+        })
+    except Exception as e:
+        # Não arrebenta a app se S3 falhar; o estado em memória continua
+        app.logger.error(f"[JOB STATE] Falha a gravar no storage: {e}")
+
+def _load_job_state():
+    from storage import get_storage
+    storage = get_storage()
+    try:
+        data = storage.read_json(_job_status_storage_key())
+        if data:
+            return data
+    except Exception as e:
+        app.logger.error(f"[JOB STATE] Falha a ler do storage: {e}")
+    # fallback ao estado em memória se não houver nada no S3
+    return {
         "running": JOB_STATE["running"],
         "started_at": JOB_STATE["started_at"],
         "finished_at": JOB_STATE["finished_at"],
@@ -263,14 +288,10 @@ def _save_job_state():
         "total": JOB_STATE["total"],
         "error": JOB_STATE["error"],
         "ts": datetime.utcnow().isoformat() + "Z",
-    })
-
-def _load_job_state():
-    storage = get_storage()
-    data = storage.read_json(_job_status_storage_key())
-    return data or {}
+    }
 
 def _run_classify_job(limit=None, simulate=False):
+    from suprides_identify import classify_suprides_products
     try:
         JOB_STATE.update({
             "running": True,
@@ -280,11 +301,11 @@ def _run_classify_job(limit=None, simulate=False):
             "total": 0,
             "error": None,
         })
-        _save_job_state()
+        _save_job_state()  # grava logo no início
 
-        # Dica: se quiseres limitar volume na fase inicial, passa limit=200
-        df = classify_suprides_products(simulate=simulate)  # mantemos como está
-        # Se quiseres mesmo limitar já: df = classify_suprides_products(simulate=simulate, limit=limit)
+        # Corre a classificação
+        # Se adicionaste 'limit' à função, passa-o aqui; senão, remove o argumento.
+        df = classify_suprides_products(simulate=simulate)
 
         JOB_STATE.update({
             "running": False,
@@ -307,6 +328,17 @@ def suprides_classify_async():
     if JOB_STATE.get("running"):
         return jsonify({"ok": True, "message": "Classificação já a correr."})
 
+    # grava estado imediatamente para que /status não devolva {}
+    JOB_STATE.update({
+        "running": True,
+        "started_at": datetime.utcnow().isoformat() + "Z",
+        "finished_at": None,
+        "progress": 0,
+        "total": 0,
+        "error": None,
+    })
+    _save_job_state()
+
     limit = request.args.get("limit")
     simulate = request.args.get("simulate", "false").lower() == "true"
 
@@ -316,9 +348,14 @@ def suprides_classify_async():
 
 @app.route("/jobs/suprides/status", methods=["GET"])
 def suprides_job_status():
-    """Mostra o estado atual do job a partir do S3 (sobrevive a restart)."""
+    """Mostra o estado atual do job. Primeiro tenta S3; se não houver, devolve o estado em memória."""
     state = _load_job_state()
     return jsonify({"ok": True, "state": state})
+
+@app.route("/jobs/suprides/status_live", methods=["GET"])
+def suprides_job_status_live():
+    """Estado em memória, útil para debug rápido sem depender do S3."""
+    return jsonify({"ok": True, "state": JOB_STATE})
 
 @app.route("/suprides/review_classified")
 def suprides_review_classified():

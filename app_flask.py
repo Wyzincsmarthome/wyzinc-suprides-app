@@ -2,12 +2,15 @@
 import os
 import json
 import logging
+import threading
+import time
 from datetime import datetime
 
 import pandas as pd
 import requests
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, redirect, url_for
+from storage import get_storage
 
 # -------------------------- Setup .env e logging --------------------------
 load_dotenv()  # TEM MESMO DE VIR ANTES DE CRIAR CLIENTES/BLUEPRINTS
@@ -47,6 +50,15 @@ os.makedirs("logs", exist_ok=True)
 
 SETTINGS_FILE = "data/settings.json"
 SELECTED_SKUS_FILE = "data/selected_skus.json"
+
+JOB_STATE = {
+    "running": False,
+    "started_at": None,
+    "finished_at": None,
+    "progress": 0,
+    "total": 0,
+    "error": None,
+}
 
 # -------------------------- Healthcheck ----------------------------
 @app.route("/healthz")
@@ -238,6 +250,75 @@ def suprides_classify_route():
         log.exception("Erro na classificação Suprides")
         return jsonify({"success": False, "error": str(e)}), 500
 
+def _job_status_storage_key():
+    return "jobs/suprides_classify_status.json"
+
+def _save_job_state():
+    storage = get_storage()
+    storage.write_json(_job_status_storage_key(), {
+        "running": JOB_STATE["running"],
+        "started_at": JOB_STATE["started_at"],
+        "finished_at": JOB_STATE["finished_at"],
+        "progress": JOB_STATE["progress"],
+        "total": JOB_STATE["total"],
+        "error": JOB_STATE["error"],
+        "ts": datetime.utcnow().isoformat() + "Z",
+    })
+
+def _load_job_state():
+    storage = get_storage()
+    data = storage.read_json(_job_status_storage_key())
+    return data or {}
+
+def _run_classify_job(limit=None, simulate=False):
+    try:
+        JOB_STATE.update({
+            "running": True,
+            "started_at": datetime.utcnow().isoformat() + "Z",
+            "finished_at": None,
+            "progress": 0,
+            "total": 0,
+            "error": None,
+        })
+        _save_job_state()
+
+        # Dica: se quiseres limitar volume na fase inicial, passa limit=200
+        df = classify_suprides_products(simulate=simulate)  # mantemos como está
+        # Se quiseres mesmo limitar já: df = classify_suprides_products(simulate=simulate, limit=limit)
+
+        JOB_STATE.update({
+            "running": False,
+            "finished_at": datetime.utcnow().isoformat() + "Z",
+            "progress": len(df.index),
+            "total": len(df.index),
+        })
+        _save_job_state()
+    except Exception as e:
+        JOB_STATE.update({
+            "running": False,
+            "finished_at": datetime.utcnow().isoformat() + "Z",
+            "error": str(e),
+        })
+        _save_job_state()
+
+@app.route("/suprides/classify_async", methods=["POST", "GET"])
+def suprides_classify_async():
+    """Dispara o job e responde logo, para não dar timeout 502."""
+    if JOB_STATE.get("running"):
+        return jsonify({"ok": True, "message": "Classificação já a correr."})
+
+    limit = request.args.get("limit")
+    simulate = request.args.get("simulate", "false").lower() == "true"
+
+    t = threading.Thread(target=_run_classify_job, kwargs={"limit": limit, "simulate": simulate}, daemon=True)
+    t.start()
+    return jsonify({"ok": True, "message": "Classificação iniciada. Consulta /jobs/suprides/status"})
+
+@app.route("/jobs/suprides/status", methods=["GET"])
+def suprides_job_status():
+    """Mostra o estado atual do job a partir do S3 (sobrevive a restart)."""
+    state = _load_job_state()
+    return jsonify({"ok": True, "state": state})
 
 @app.route("/suprides/review_classified")
 def suprides_review_classified():

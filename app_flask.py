@@ -65,6 +65,21 @@ JOB_STATE = {
 def healthz():
     return "ok", 200
 
+@app.route("/diag/storage", methods=["GET"])
+def diag_storage():
+    from storage import get_storage
+    from datetime import datetime
+    s = get_storage()
+    now = datetime.utcnow().isoformat() + "Z"
+    # write JSON
+    s.write_json("diag/ping.json", {"ok": True, "ts": now})
+    # write CSV
+    s.write_csv("diag/ping.csv", [{"ts": now, "msg": "hello"}])
+    # read back
+    j = s.read_json("diag/ping.json")
+    c = s.read_csv("diag/ping.csv")
+    return {"ok": True, "json": j, "csv_rows": len(c)}
+
 # ----------------------- Helpers ---------------------------    
 @app.post("/reprice_selected")
 def reprice_selected():

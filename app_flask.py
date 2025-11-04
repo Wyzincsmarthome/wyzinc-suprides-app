@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import threading, time, traceback, os
 import json
 import logging
 from datetime import datetime
@@ -20,7 +20,6 @@ app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET", "change_me")
 
 # -------------------------- Imports locais (rotas, etc.) -----------------
 from amazon_client import AmazonClient
-from suprides_identify import classify_suprides_products  # novo: classificação de produtos Suprides
 from auto_product_type import AutoPT
 from csv_processor_visiotech import process_csv, load_cfg
 from product_identify import classify_products
@@ -29,18 +28,17 @@ from routes_enrich import bp_enrich
 from inventory_sync import refresh_inventory
 from app_suprides import bp as suprides_bp  # blueprint da Suprides
 from pricing_engine import calc_final_price
+from storage import get_storage
 
 # Importação da função de classificação da Suprides.
-# Esta função normaliza os produtos, calcula preços e resolve o estado catalog_match/catalog_ambiguous/listed.
 try:
     from suprides_identify import classify_suprides_products
 except Exception:
-    # Suporte a ambiente onde o módulo ainda não existe. A função será usada apenas se estiver presente.
     classify_suprides_products = None
 
 # -------------------------- Registar blueprints UMA vez -------------------
 app.register_blueprint(bp_enrich)     # já existia no teu projeto
-app.register_blueprint(suprides_bp)   # novo blueprint da Suprides
+app.register_blueprint(suprides_bp)   # blueprint da Suprides
 
 # -------------------------- Pastas e ficheiros ----------------------------
 os.makedirs("data", exist_ok=True)
@@ -49,6 +47,12 @@ os.makedirs("logs", exist_ok=True)
 
 SETTINGS_FILE = "data/settings.json"
 SELECTED_SKUS_FILE = "data/selected_skus.json"
+
+# ---------- Health ----------
+@app.route("/healthz", methods=["GET"])
+def healthz():
+    return jsonify({"ok": True, "ts": time.time()})
+
 
 # ----------------------- Helpers ---------------------------
 @app.post("/reprice_selected")
@@ -208,23 +212,25 @@ def index():
             ("/debug/mapping_selected", "DEBUG: mapping seleção"),
             ("/actions/select_by_skus?skus=SKU1,SKU2", "Selecionar SKUs via URL"),
             ("/actions/clear_selection", "Limpar seleção"),
+            ("/suprides/classify_async", "Classificar Suprides (ASSÍNCRONO)"),
+            ("/jobs/suprides/status", "Estado do job Suprides"),
         ]
         a = "".join([f"<li><a href='{u}'>{t}</a></li>" for u,t in links])
         return f"<h1>App — UI básica</h1><ul>{a}</ul><pre>{json.dumps(stats, ensure_ascii=False, indent=2)}</pre>"
 
 
-# ------------------ Suprides Classification ------------------
+# ------------------ Suprides Classification (SINCRONO) ------------------
 @app.route("/suprides/classify")
 def suprides_classify_route():
     """
-    Executa a classificação de todos os produtos da Suprides.
+    Executa a classificação de todos os produtos da Suprides (bloqueante).
     Gera o ficheiro data/suprides_classified.csv e devolve um resumo em JSON.
     """
     if classify_suprides_products is None:
         return jsonify({"success": False, "error": "Função classify_suprides_products não disponível."}), 500
     try:
         df = classify_suprides_products()
-        # Guarda CSV
+        # Guarda CSV local (mantive como tens)
         path = "data/suprides_classified.csv"
         os.makedirs(os.path.dirname(path), exist_ok=True)
         df.to_csv(path, index=False)
@@ -250,10 +256,9 @@ def suprides_review_classified():
     brands = []
     if not df.empty:
         statuses = sorted(set(df["status"].tolist()))
-        # Inclui 'listed' se existir coluna listed
         if "listed" in df.columns:
-            # Quando listed=True, considera status=listed independentemente da coluna status
-            if any(df["listed"].astype(str).str.lower() == "true") and "listed" not in statuses:
+            # se "listed" constar como coluna textual booleana
+            if any(df["listed"].astype(str).str.lower().isin(["yes", "true"])) and "listed" not in statuses:
                 statuses.insert(0, "listed")
         brands = sorted(set([b for b in df.get("brand", []).tolist() if b]))
     try:
@@ -276,6 +281,91 @@ def suprides_review_classified():
         return _fallback_table(rows, cols, "Fallback: Suprides classificados") + extra
 
 
+# ----------------- CLASSIFICAÇÃO ASSÍNCRONA (evita 502) -----------------
+JOB_KEY = "suprides"
+_job_state = {
+    JOB_KEY: {
+        "running": False,
+        "started_at": None,
+        "finished_at": None,
+        "progress": 0,
+        "total": 0,
+        "error": None,
+        "last_tick": None,
+    }
+}
+_job_lock = threading.Lock()
+_worker_thread = {JOB_KEY: None}
+
+def _set_state(**kwargs):
+    with _job_lock:
+        st = _job_state[JOB_KEY]
+        st.update(kwargs)
+        st["last_tick"] = time.time()
+        # opcional: persistir no storage (S3/local) para sobreviver a reboot
+        try:
+            get_storage().write_json("diag/job_state.json", st)
+        except Exception:
+            pass
+
+def _reset_state():
+    _set_state(running=False, started_at=None, finished_at=None,
+               progress=0, total=0, error=None)
+
+def _classify_worker(simulate=False):
+    try:
+        _set_state(running=True, error=None, started_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                   finished_at=None, progress=0, total=0)
+
+        if classify_suprides_products is None:
+            raise RuntimeError("Função classify_suprides_products não disponível.")
+
+        # 1) Executa a classificação (bloqueante) fora da request
+        df = classify_suprides_products(simulate=simulate)
+
+        # 2) Guarda CSV local (mantive tua lógica; se tiveres storage S3, podes trocar por get_storage().write_csv)
+        path = "data/suprides_classified.csv"
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        df.to_csv(path, index=False)
+
+        # 3) Atualiza progresso
+        total = int(df.shape[0]) if hasattr(df, "shape") else 0
+        _set_state(progress=total, total=total)
+
+        _set_state(running=False, finished_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+    except Exception as e:
+        traceback.print_exc()
+        _set_state(error=f"{type(e).__name__}: {e}", running=False,
+                   finished_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+
+@app.route("/suprides/classify_async", methods=["POST", "GET"])
+def suprides_classify_async():
+    """
+    Dispara a classificação em background e responde imediatamente (evita timeouts 502).
+    Usa /jobs/suprides/status para acompanhar.
+    """
+    simulate = (request.args.get("simulate") or os.getenv("SPAPI_SIMULATE", "false")).lower() in ("1","true","yes","on")
+    with _job_lock:
+        if _job_state[JOB_KEY]["running"]:
+            return jsonify({"ok": True, "message": "Já em execução", "state": _job_state[JOB_KEY]})
+        _reset_state()
+        th = threading.Thread(target=_classify_worker, kwargs={"simulate": simulate}, daemon=True)
+        _worker_thread[JOB_KEY] = th
+        th.start()
+    return jsonify({"ok": True, "message": "Classificação iniciada. Consulta /jobs/suprides/status"})
+
+@app.route("/jobs/suprides/status", methods=["GET"])
+def jobs_status():
+    with _job_lock:
+        return jsonify({"ok": True, "state": _job_state[JOB_KEY]})
+
+@app.route("/jobs/suprides/status_live", methods=["GET"])
+def jobs_status_live():
+    with _job_lock:
+        return jsonify({"ok": True, "state": _job_state[JOB_KEY]})
+
+
+# ----------------------- Restante UI/Rotas originais ---------------------
 @app.route("/review_data")
 def review_data():
     raw = request.args.get("raw") in ("1", "true", "yes", "on")
@@ -429,7 +519,6 @@ def selected():
     return jsonify({"selected": _read_selected_skus(), "count": len(_read_selected_skus())})
 
 
-# Helpers de debug/controlo de seleção
 @app.get("/actions/select_by_skus")
 def actions_select_by_skus():
     """
@@ -480,7 +569,7 @@ def amazon_overview():
         return redirect(url_for("fetch_amazon_data"))
     df = _load_df(path)
     try:
-        return render_template("amazon_overview.html", rows=df.to_dict(orient="records"), cols=list(df.columns))
+        return render_template("amazon_overview.html", rows=df.to_dict(orient("records")), cols=list(df.columns))
     except Exception:
         return _fallback_table(df.to_dict(orient="records"), list(df.columns), "Fallback: Amazon Overview")
 

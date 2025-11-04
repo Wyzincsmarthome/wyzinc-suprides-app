@@ -160,9 +160,10 @@ def _suprides_status_summary() -> dict:
 
 
 def _load_suprides_df() -> pd.DataFrame:
-    """
-    Carrega o CSV de classificados da Suprides. Se não existir, devolve DataFrame vazio.
-    """
+    if get_storage:
+        rows = get_storage().read_csv("suprides_classified.csv")
+        return pd.DataFrame(rows).fillna("") if rows else pd.DataFrame()
+    # fallback local
     path = "data/suprides_classified.csv"
     if not os.path.exists(path):
         return pd.DataFrame()
@@ -303,10 +304,11 @@ def _set_state(**kwargs):
         st.update(kwargs)
         st["last_tick"] = time.time()
         # opcional: persistir no storage (S3/local) para sobreviver a reboot
-        try:
-            get_storage().write_json("diag/job_state.json", st)
-        except Exception:
-            pass
+        if get_storage:
+            try:
+                get_storage().write_json("diag/job_state.json", st)
+            except Exception:
+                pass
 
 def _reset_state():
     _set_state(running=False, started_at=None, finished_at=None,
@@ -314,8 +316,14 @@ def _reset_state():
 
 def _classify_worker(simulate=False):
     try:
-        _set_state(running=True, error=None, started_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                   finished_at=None, progress=0, total=0)
+        _set_state(
+            running=True,
+            error=None,
+            started_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            finished_at=None,
+            progress=0,
+            total=0
+        )
 
         if classify_suprides_products is None:
             raise RuntimeError("Função classify_suprides_products não disponível.")
@@ -323,20 +331,49 @@ def _classify_worker(simulate=False):
         # 1) Executa a classificação (bloqueante) fora da request
         df = classify_suprides_products(simulate=simulate)
 
-        # 2) Guarda CSV local (mantive tua lógica; se tiveres storage S3, podes trocar por get_storage().write_csv)
-        path = "data/suprides_classified.csv"
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        df.to_csv(path, index=False)
+        # 2) Persistência do CSV (S3 se disponível; caso contrário, disco local)
+        try:
+            if 'get_storage' in globals() and get_storage:
+                # grava em s3://<S3_BUCKET>/<S3_PREFIX>/suprides_classified.csv (se STORAGE_PROVIDER='s3')
+                get_storage().write_csv("suprides_classified.csv", df)
+            else:
+                # fallback local
+                path = "data/suprides_classified.csv"
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                df.to_csv(path, index=False)
+        except Exception as perr:
+            # Se falhar S3 por qualquer motivo, faz fallback local e segue
+            try:
+                path = "data/suprides_classified.csv"
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                df.to_csv(path, index=False)
+            except Exception:
+                # re-levanta com contexto para aparecer no estado do job
+                raise RuntimeError(f"Falha a persistir CSV (S3 e local): {perr}") from perr
 
         # 3) Atualiza progresso
-        total = int(df.shape[0]) if hasattr(df, "shape") else 0
+        total = int(getattr(df, "shape", (0, 0))[0]) if df is not None else 0
         _set_state(progress=total, total=total)
 
-        _set_state(running=False, finished_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+        # 4) Finaliza estado
+        _set_state(
+            running=False,
+            finished_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        )
+
     except Exception as e:
-        traceback.print_exc()
-        _set_state(error=f"{type(e).__name__}: {e}", running=False,
-                   finished_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+        # Log + estado de erro
+        try:
+            import traceback as _tb
+            _tb.print_exc()
+        except Exception:
+            pass
+        _set_state(
+            error=f"{type(e).__name__}: {e}",
+            running=False,
+            finished_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        )
+
 
 @app.route("/suprides/classify_async", methods=["POST", "GET"])
 def suprides_classify_async():

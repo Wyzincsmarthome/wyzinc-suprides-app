@@ -1,7 +1,12 @@
 import csv
+import sys
 from pathlib import Path
 
-from amazon_feed_csv import build_feed_rows, generate_feed_csv, DEFAULT_COLUMNS
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from amazon_feed_csv import DEFAULT_COLUMNS, build_feed_rows, generate_feed_csv
 
 
 def test_build_feed_rows_merges_offers_and_prices():
@@ -35,7 +40,7 @@ def test_build_feed_rows_merges_offers_and_prices():
     assert row_3["price"] == "7.80"
 
 
-def test_generate_feed_csv_writes_file(tmp_path):
+def test_generate_feed_csv_writes_file(tmp_path: Path):
     offers = [{"sku": "SUP100", "quantity": 3, "price": 15.5}]
     prices = [{"sku": "SUP100", "price": 15.5, "currency": "EUR"}]
 

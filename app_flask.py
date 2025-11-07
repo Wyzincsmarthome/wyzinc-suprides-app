@@ -52,6 +52,41 @@ SELECTED_SKUS_FILE = "data/selected_skus.json"
 def healthz():
     return jsonify({"ok": True, "ts": time.time()})
 
+@app.route("/diag/storage", methods=["GET"])
+def diag_storage():
+    """Verifica se o storage configurado consegue escrever e ler JSON/CSV."""
+    storage = get_storage()
+    now = datetime.utcnow().isoformat() + "Z"
+    json_name = "diag/storage_probe.json"
+    csv_name = "diag/storage_probe.csv"
+
+    payload = {"ok": True, "ts": now}
+    csv_rows = [
+        {"seq": 1, "ts": now, "note": "ping"},
+        {"seq": 2, "ts": now, "note": "pong"},
+    ]
+
+    try:
+        storage.write_json(json_name, payload)
+        storage.write_csv(csv_name, csv_rows)
+        roundtrip_json = storage.read_json(json_name)
+        roundtrip_csv = storage.read_csv(csv_name)
+    except Exception as exc:
+        log.exception("Falha no diagnóstico de storage")
+        return jsonify({"success": False, "error": str(exc)}), 500
+
+    return jsonify(
+        {
+            "success": True,
+            "provider": os.environ.get("STORAGE_PROVIDER", "local"),
+            "storage_class": storage.__class__.__name__,
+            "json_object": roundtrip_json,
+            "csv_rows": roundtrip_csv,
+            "written_at": now,
+        }
+    )
+
+
 def _fallback_table(rows: list, cols: list, title: str) -> str:
     import html
     th = "".join([f"<th>{html.escape(c)}</th>" for c in cols])

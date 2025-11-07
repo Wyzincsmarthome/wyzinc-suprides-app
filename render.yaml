@@ -1,0 +1,19 @@
+diff --git a/render.yaml b/render.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..29994ee10e92c5b79bfb938ebab50ccfc48c5a1e
+--- /dev/null
++++ b/render.yaml
+@@ -0,0 +1,13 @@
++services:
++  - type: web
++    name: suprides-app
++    env: python
++    plan: starter
++    region: frankfurt
++    buildCommand: pip install -r requirements.txt
++    startCommand: gunicorn app_flask:app --bind 0.0.0.0:$PORT --workers 3
++    envVars:
++      - key: PYTHON_VERSION
++        value: 3.11
++      - key: FLASK_ENV
++        value: production

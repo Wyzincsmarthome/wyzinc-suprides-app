@@ -77,6 +77,10 @@
           <a href="/suprides/classify">Executar classificação</a>
         </p>
       {% endif %}
+      <p>
+        <button id="btnSupridesClassifyAsync" type="button">Classificar Suprides (assíncrono)</button>
+        <span id="supridesJobStatus" class="muted" style="margin-left:8px;"></span>
+      </p>
     </div>
 
     <div class="card">
@@ -94,4 +98,65 @@
   </div>
 
 </body>
+<script>
+  async function fetchSupridesStatus() {
+    try {
+      const resp = await fetch('/suprides/jobs/suprides/status');
+      if (!resp.ok) return null;
+      return await resp.json();
+    } catch (err) {
+      console.error('Falha a obter estado Suprides', err);
+      return null;
+    }
+  }
+
+  function renderSupridesStatus(data) {
+    const el = document.getElementById('supridesJobStatus');
+    if (!el) return;
+    if (!data || !data.job) {
+      el.textContent = '';
+      return;
+    }
+    const job = data.job;
+    if (job.running) {
+      el.textContent = `Job ${job.job_id || ''} em execução…`;
+    } else if (job.success === true) {
+      el.textContent = `Último job: ${job.rows || 0} linhas • ${job.finished_at || ''}`;
+    } else if (job.success === false) {
+      el.textContent = `Job falhou: ${job.error || 'erro desconhecido'}`;
+    } else {
+      el.textContent = '';
+    }
+  }
+
+  async function pollSupridesStatus(intervalMs = 5000) {
+    const data = await fetchSupridesStatus();
+    renderSupridesStatus(data);
+    if (data && data.job && data.job.running) {
+      setTimeout(() => pollSupridesStatus(intervalMs), intervalMs);
+    }
+  }
+
+  document.getElementById('btnSupridesClassifyAsync')?.addEventListener('click', async (ev) => {
+    const btn = ev.currentTarget;
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'A iniciar…';
+    try {
+      const resp = await fetch('/suprides/classify_async', { method: 'POST' });
+      const data = await resp.json();
+      renderSupridesStatus(data);
+      pollSupridesStatus();
+    } catch (err) {
+      console.error('Erro a iniciar classificação', err);
+      const statusEl = document.getElementById('supridesJobStatus');
+      if (statusEl) statusEl.textContent = 'Erro ao iniciar job.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+
+  pollSupridesStatus();
+</script>
 </html>

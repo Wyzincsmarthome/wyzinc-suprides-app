@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import os
+import json
 import logging
+import threading
+import uuid
 from datetime import datetime
 from typing import List, Dict, Any
 
@@ -24,6 +27,7 @@ from pricing_engine import calc_final_price
 from amazon_client import AmazonClient
 from suprides_sync import collect_for_sync
 from amazon_feed_csv import generate_feed_csv
+from storage import get_storage
 
 log = logging.getLogger("app_suprides")
 
@@ -35,6 +39,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 CLASSIFIED_CSV = os.path.join(DATA_DIR, "suprides_classified.csv")
 SUPRIDES_CSV = CLASSIFIED_CSV  # alias para manter compatibilidade
 AMAZON_FEED_CSV = os.path.join(DATA_DIR, "amazon_suprides_feed.csv")
+JOB_STATUS_FILE = os.path.join(DATA_DIR, "suprides_job_status.json")
 
 DEFAULT_MARKETPLACE_ID = os.environ.get("DEFAULT_MARKETPLACE_ID", "").strip() or "A1RKKUPIHCS9HS"
 MARKETPLACE_ID = os.environ.get("MARKETPLACE_ID", DEFAULT_MARKETPLACE_ID)
@@ -46,6 +51,71 @@ NEEDED_COLS = [
 ]
 
 bp = Blueprint("suprides", __name__, url_prefix="/suprides")
+
+
+_job_lock = threading.Lock()
+
+
+def _default_job_state() -> Dict[str, Any]:
+    return {
+        "running": False,
+        "job_id": None,
+        "started_at": None,
+        "finished_at": None,
+        "success": None,
+        "error": None,
+        "rows": 0,
+        "summary": {},
+        "storage_provider": os.environ.get("STORAGE_PROVIDER", "local"),
+        "updated_at": None,
+    }
+
+
+def _load_job_state() -> Dict[str, Any]:
+    if not os.path.exists(JOB_STATUS_FILE):
+        return _default_job_state()
+    try:
+        with open(JOB_STATUS_FILE, "r", encoding="utf-8") as handle:
+            data = json.load(handle) or {}
+        if isinstance(data, dict):
+            state = _default_job_state()
+            state.update({k: data.get(k) for k in state.keys()})
+            return state
+    except Exception:
+        log.exception("Falha a ler estado do job Suprides")
+    return _default_job_state()
+
+
+_job_state: Dict[str, Any] = _load_job_state()
+
+
+def _persist_job_state(state: Dict[str, Any]) -> None:
+    try:
+        os.makedirs(os.path.dirname(JOB_STATUS_FILE), exist_ok=True)
+        with open(JOB_STATUS_FILE, "w", encoding="utf-8") as handle:
+            json.dump(state, handle, ensure_ascii=False, indent=2, sort_keys=True)
+    except Exception:
+        log.exception("Falha a guardar estado do job Suprides")
+
+    try:
+        storage = get_storage()
+        storage.write_json("jobs/suprides_status.json", state)
+    except Exception:
+        log.exception("Falha a enviar estado do job Suprides para o storage")
+
+
+def _set_job_state(**updates: Any) -> Dict[str, Any]:
+    with _job_lock:
+        _job_state.update(updates)
+        _job_state["updated_at"] = datetime.utcnow().isoformat() + "Z"
+        state_copy = dict(_job_state)
+    _persist_job_state(state_copy)
+    return state_copy
+
+
+def _get_job_state() -> Dict[str, Any]:
+    with _job_lock:
+        return dict(_job_state)
 
 
 def _ensure_columns(df: pd.DataFrame, needed: List[str] | None = None) -> pd.DataFrame:
@@ -123,6 +193,50 @@ def _summary_by_status(rows: List[dict]) -> dict:
     return out
 
 
+def _start_classify_job(job_id: str, flask_app) -> None:
+    """Lança uma thread que corre classify_suprides_products e atualiza estado."""
+
+    started_at = datetime.utcnow().isoformat() + "Z"
+    _set_job_state(
+        running=True,
+        job_id=job_id,
+        started_at=started_at,
+        finished_at=None,
+        success=None,
+        error=None,
+        rows=0,
+        summary={},
+    )
+
+    def _runner() -> None:
+        try:
+            with flask_app.app_context():
+                df = classify_suprides_products(simulate=False)
+        except Exception as exc:
+            log.exception("Job de classificação Suprides falhou")
+            _set_job_state(
+                running=False,
+                finished_at=datetime.utcnow().isoformat() + "Z",
+                success=False,
+                error=str(exc),
+            )
+            return
+
+        rows = df.to_dict(orient="records") if hasattr(df, "to_dict") else []
+        summary = _summary_by_status(rows)
+        _set_job_state(
+            running=False,
+            finished_at=datetime.utcnow().isoformat() + "Z",
+            success=True,
+            error=None,
+            rows=len(rows),
+            summary=summary,
+        )
+
+    thread = threading.Thread(target=_runner, name=f"suprides-classify-{job_id}", daemon=True)
+    thread.start()
+
+
 def _parse_limit(default: int = 200) -> int:
     raw = (request.args.get("limit") or "").strip()
     if not raw:
@@ -174,6 +288,31 @@ def download_feed_csv():
         as_attachment=True,
         download_name=os.path.basename(AMAZON_FEED_CSV),
     )
+
+
+@bp.route("/classify_async", methods=["POST", "GET"])
+def classify_async():
+    """Dispara a classificação em background e devolve o estado do job."""
+    state = _get_job_state()
+    if state.get("running"):
+        return jsonify({"success": True, "job": state, "already_running": True})
+
+    job_id = datetime.utcnow().strftime("%Y%m%d%H%M%S") + f"-{uuid.uuid4().hex[:6]}"
+    flask_app = current_app._get_current_object()
+    _start_classify_job(job_id, flask_app)
+    return jsonify({"success": True, "job": _get_job_state(), "already_running": False})
+
+
+@bp.route("/jobs/suprides/status", methods=["GET"])
+def job_status():
+    state = _get_job_state()
+    return jsonify({"success": True, "job": state})
+
+
+@bp.route("/jobs/suprides/status_live", methods=["GET"])
+def job_status_live():
+    """Mantém compatibilidade devolvendo o mesmo JSON do status normal."""
+    return job_status()
 
 
 @bp.route("/suprides/classify", methods=["GET"])

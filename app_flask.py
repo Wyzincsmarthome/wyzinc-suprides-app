@@ -1,4 +1,4 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+(cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/app_flask.py b/app_flask.py
 index 92477a7b1cb8672ec2e1e8b9a4aa1c3ecc8da3d4..cd4045c2b39455ffdccf6c6cc98ab56811ea88bb 100644
 --- a/app_flask.py

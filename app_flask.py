@@ -50,7 +50,8 @@ SELECTED_SKUS_FILE = "data/selected_skus.json"
 @app.route("/healthz", methods=["GET"])
 def healthz():
     return jsonify({"ok": True, "ts": time.time()})
-@@ -177,50 +177,51 @@ def _fallback_table(rows: list, cols: list, title: str) -> str:
+
+def _fallback_table(rows: list, cols: list, title: str) -> str:
     import html
     th = "".join([f"<th>{html.escape(c)}</th>" for c in cols])
     trs = []

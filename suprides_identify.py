@@ -15,6 +15,7 @@ from suprides_client import SupridesClient
 from supplier_suprides import normalize  # devolve: sku, ean, brand, name, price_cost, qty_available
 from amazon_client import AmazonClient
 from pricing_engine import calc_final_price
+from storage import get_storage, LocalStorage
 
 log = logging.getLogger("suprides_identify")
 if not log.handlers:

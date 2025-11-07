@@ -133,6 +133,121 @@ def index():
         ]
         a = "".join([f"<li><a href='{u}'>{t}</a></li>" for u,t in links])
         return f"<h1>App — UI básica</h1><ul>{a}</ul><pre>{json.dumps(stats, ensure_ascii=False, indent=2)}</pre>"
+
+# --------------------------- Helpers -----------------------
+
+
+def _bool_from_any(value, default=False):
+    if value is None:
+        return bool(default)
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() in ("1", "true", "yes", "on")
+
+
+def _load_settings() -> dict:
+    if not os.path.exists(SETTINGS_FILE):
+        return {}
+    try:
+        with open(SETTINGS_FILE, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        if isinstance(data, dict):
+            return data
+    except FileNotFoundError:
+        return {}
+    except Exception:
+        log.exception("Falha a ler %s", SETTINGS_FILE)
+    return {}
+
+
+def _save_settings(data: dict) -> None:
+    os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
+    try:
+        with open(SETTINGS_FILE, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, ensure_ascii=False, indent=2, sort_keys=True)
+    except Exception:
+        log.exception("Falha a guardar %s", SETTINGS_FILE)
+
+
+def _get_simulate_flag() -> bool:
+    settings = _load_settings()
+    if "simulate" in settings:
+        return _bool_from_any(settings.get("simulate"), default=True)
+
+    env_val = os.getenv("SPAPI_SIMULATE")
+    if env_val is not None:
+        return _bool_from_any(env_val, default=True)
+
+    # Default conservador -> não chamar APIs reais por acidente
+    return True
+
+
+def _set_simulate_flag(value: bool) -> None:
+    settings = _load_settings()
+    settings["simulate"] = bool(value)
+    _save_settings(settings)
+
+
+def _load_df(path: str) -> pd.DataFrame:
+    if not os.path.exists(path):
+        return pd.DataFrame()
+    try:
+        return pd.read_csv(path)
+    except Exception:
+        log.exception("Falha a ler CSV: %s", path)
+        return pd.DataFrame()
+
+
+def _load_suprides_df() -> pd.DataFrame:
+    return _load_df("data/suprides_classified.csv")
+
+
+def _status_summary() -> dict:
+    df = _load_df("data/produtos_classificados.csv")
+    summary = {"total": int(len(df))}
+    if "status" not in df.columns:
+        return summary
+
+    for status, count in df["status"].fillna("?").astype(str).value_counts().items():
+        summary[status] = int(count)
+    return summary
+
+
+def _suprides_status_summary() -> dict:
+    df = _load_suprides_df()
+    summary = {"total": int(len(df))}
+    if "status" not in df.columns:
+        return summary
+
+    for status, count in df["status"].fillna("?").astype(str).value_counts().items():
+        summary[status] = int(count)
+    return summary
+
+
+def _read_selected_skus() -> list:
+    if not os.path.exists(SELECTED_SKUS_FILE):
+        return []
+    try:
+        with open(SELECTED_SKUS_FILE, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        if isinstance(data, list):
+            return [str(sku).strip() for sku in data if str(sku).strip()]
+    except FileNotFoundError:
+        return []
+    except Exception:
+        log.exception("Falha a ler %s", SELECTED_SKUS_FILE)
+    return []
+
+
+def _save_selected_skus(skus) -> None:
+    os.makedirs(os.path.dirname(SELECTED_SKUS_FILE), exist_ok=True)
+    payload = [str(sku).strip() for sku in (skus or []) if str(sku).strip()]
+    try:
+        with open(SELECTED_SKUS_FILE, "w", encoding="utf-8") as fh:
+            json.dump(payload, fh, ensure_ascii=False, indent=2)
+    except Exception:
+        log.exception("Falha a guardar %s", SELECTED_SKUS_FILE)
+
 # ------------------ Suprides Classification ------------------
 @app.route("/suprides/classify")
 def suprides_classify_route():

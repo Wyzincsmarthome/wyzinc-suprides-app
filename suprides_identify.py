@@ -292,4 +292,19 @@ def classify_suprides_products(simulate: bool = False) -> pd.DataFrame:
     tmp = CLASSIFIED_CSV + ".tmp"
     df.to_csv(tmp, index=False)
     os.replace(tmp, CLASSIFIED_CSV)
+
+    
+    # replica no storage configurado (S3/local) para consumo assíncrono
+    storage = get_storage()
+    try:
+        storage.write_csv("suprides_classified.csv", df)
+    except Exception:
+        log.exception("Falha ao gravar suprides_classified.csv no storage configurado")
+    else:
+        # garante cache local para a UI quando o storage principal não é local
+        if not isinstance(storage, LocalStorage):
+            try:
+                LocalStorage().write_csv("suprides_classified.csv", df)
+            except Exception:
+                log.exception("Falha ao atualizar cache local de suprides_classified.csv")
     return df

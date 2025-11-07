@@ -1,6 +1,7 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/render.yaml b/render.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..29994ee10e92c5b79bfb938ebab50ccfc48c5a1e
+index 0000000000000000000000000000000000000000..09a80f414b6f55f7c231e4b9a2edeeb37169ff59
 --- /dev/null
 +++ b/render.yaml
 @@ -0,0 +1,13 @@
@@ -11,9 +12,12 @@ index 0000000000000000000000000000000000000000..29994ee10e92c5b79bfb938ebab50ccf
 +    plan: starter
 +    region: frankfurt
 +    buildCommand: pip install -r requirements.txt
-+    startCommand: gunicorn app_flask:app --bind 0.0.0.0:$PORT --workers 3
++    startCommand: python render_start.py
 +    envVars:
 +      - key: PYTHON_VERSION
 +        value: 3.11
 +      - key: FLASK_ENV
 +        value: production
+ 
+EOF
+)

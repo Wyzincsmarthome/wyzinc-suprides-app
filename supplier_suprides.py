@@ -1,3 +1,4 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/supplier_suprides.py b/supplier_suprides.py
 index 3471ef4ffb4338ce3327543907ba0192476f57ca..1a6f37c82d90d1a31881814de4f079990e53c17c 100644
 --- a/supplier_suprides.py
@@ -167,3 +168,6 @@ index 3471ef4ffb4338ce3327543907ba0192476f57ca..1a6f37c82d90d1a31881814de4f07999
          "price_cost": price_cost,
          "qty_available": qty_available,  # <- 0/1/5/10 conforme mapping
      }
+ 
+EOF
+)

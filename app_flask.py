@@ -5,7 +5,7 @@ from datetime import datetime
 import pandas as pd
 import requests
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, jsonify, redirect, url_for,
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 
 # -------------------------- Setup .env e logging --------------------------
 load_dotenv()  # TEM MESMO DE VIR ANTES DE CRIAR CLIENTES/BLUEPRINTS

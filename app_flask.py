@@ -26,7 +26,6 @@ from product_identify import classify_products
 from amazon_insights import build_overview
 from routes_enrich import bp_enrich
 from inventory_sync import refresh_inventory
-from app_suprides import bp as suprides_bp  # blueprint da Suprides
 from app_suprides import bp as suprides_bp, _feed_metadata  # blueprint da Suprides
 from pricing_engine import calc_final_price
 from storage import get_storage
@@ -87,7 +86,6 @@ def diag_storage():
             "written_at": now,
         }
     )
-
 
 def _fallback_table(rows: list, cols: list, title: str) -> str:
     import html

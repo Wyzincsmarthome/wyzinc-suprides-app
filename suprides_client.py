@@ -1,3 +1,4 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/suprides_client.py b/suprides_client.py
 index d055feeae74656d52c7f132f29189f10f4a83e3d..856a9c5a3b967d9edecc30a54542f8825aa1c08c 100644
 --- a/suprides_client.py
@@ -225,3 +226,6 @@ index d055feeae74656d52c7f132f29189f10f4a83e3d..856a9c5a3b967d9edecc30a54542f882
 +                total_items += 1
                  yield it
              offset += limit
+ 
+EOF
+)

@@ -1,3 +1,4 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/suprides_sync.py b/suprides_sync.py
 index 41ba07a020bfa9b0fac28ee6658a9df147f0e067..b9bfa4d2a458d9891deef85047833ce910745acb 100644
 --- a/suprides_sync.py
@@ -112,3 +113,6 @@ index 41ba07a020bfa9b0fac28ee6658a9df147f0e067..b9bfa4d2a458d9891deef85047833ce9
 -    return offers, prices, total_collected
 \ No newline at end of file
 +    return offers, prices, total_collected
+ 
+EOF
+)

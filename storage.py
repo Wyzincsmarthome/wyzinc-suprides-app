@@ -4,7 +4,7 @@ import os
 import io
 import json
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 import pandas as pd
 
 log = logging.getLogger("storage")
@@ -55,14 +55,53 @@ class LocalStorage:
 
 class S3Storage:
     """ Requer STORAGE_PROVIDER='s3' e vars: S3_BUCKET, S3_REGION, (opcional) S3_PREFIX. """
+
+    ARN_PREFIX = "arn:aws:s3:::"
+    
     def __init__(self) -> None:
         import boto3
-        self.bucket = os.environ.get("S3_BUCKET", "").strip()
-        self.region = os.environ.get("S3_REGION", "").strip()
-        self.prefix = os.environ.get("S3_PREFIX", "").strip() or ""
-        if not self.bucket or not self.region:
+
+        raw_bucket = (os.environ.get("S3_BUCKET") or "").strip()
+        bucket, inferred_prefix = self._extract_bucket_and_prefix(raw_bucket)
+
+        self.region = (os.environ.get("S3_REGION") or "").strip()
+        explicit_prefix = (os.environ.get("S3_PREFIX") or "").strip()
+
+        if not bucket or not self.region:
             raise RuntimeError("S3_STORAGE: S3_BUCKET e S3_REGION são obrigatórios.")
+
+        self.bucket = bucket
+        self.prefix = self._normalize_prefix(explicit_prefix or inferred_prefix)
+
+        if raw_bucket != bucket:
+            log.info(
+                "S3Storage bucket normalizado de '%s' para '%s' (prefix='%s')",
+                raw_bucket,
+                self.bucket,
+                self.prefix,
+            )
+
         self.s3 = boto3.client("s3", region_name=self.region)
+
+    @classmethod
+    def _extract_bucket_and_prefix(cls, raw_bucket: str) -> Tuple[str, str]:
+        value = (raw_bucket or "").strip()
+        if not value:
+            return "", ""
+        if value.startswith(cls.ARN_PREFIX):
+            remainder = value[len(cls.ARN_PREFIX) :].lstrip("/")
+            if not remainder:
+                return "", ""
+            if "/" in remainder:
+                bucket_name, inferred_prefix = remainder.split("/", 1)
+            else:
+                bucket_name, inferred_prefix = remainder, ""
+            return bucket_name.strip(), cls._normalize_prefix(inferred_prefix)
+        return value, ""
+
+    @staticmethod
+    def _normalize_prefix(prefix: str) -> str:
+        return prefix.strip().strip("/") if prefix else ""
     def _key(self, name: str) -> str:
         return f"{self.prefix.strip().rstrip('/')}/{name.lstrip('/')}" if self.prefix else name.lstrip("/")
     def write_json(self, name: str, data: Dict[str, Any]) -> None:

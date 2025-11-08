@@ -26,15 +26,13 @@ from product_identify import classify_products
 from amazon_insights import build_overview
 from routes_enrich import bp_enrich
 from inventory_sync import refresh_inventory
-from app_suprides import bp as suprides_bp, _feed_metadata  # blueprint da Suprides
+from app_suprides import (
+    bp as suprides_bp,
+    _feed_metadata,  # blueprint da Suprides
+    suprides_classify_route as suprides_classify_api,
+)
 from pricing_engine import calc_final_price
 from storage import get_storage
-
-# Importação da função de classificação da Suprides.
-try:
-    from suprides_identify import classify_suprides_products
-except Exception:
-    classify_suprides_products = None
 
 # -------------------------- Registar blueprints UMA vez -------------------
 app.register_blueprint(bp_enrich)     # já existia no teu projeto
@@ -249,26 +247,10 @@ def _save_selected_skus(skus) -> None:
         log.exception("Falha a guardar %s", SELECTED_SKUS_FILE)
 
 # ------------------ Suprides Classification ------------------
-@app.route("/suprides/classify")
+@app.route("/suprides/classify", methods=["GET", "POST"])
 def suprides_classify_route():
-    """
-    Executa a classificação de todos os produtos da Suprides.
-    Gera o ficheiro data/suprides_classified.csv e devolve um resumo em JSON.
-    """
-    if classify_suprides_products is None:
-        return jsonify({"success": False, "error": "Função classify_suprides_products não disponível."}), 500
-    try:
-        df = classify_suprides_products()
-        # Guarda CSV
-        path = "data/suprides_classified.csv"
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        df.to_csv(path, index=False)
-        # Devolve counts
-        summary = _suprides_status_summary()
-        return jsonify({"success": True, "rows": len(df), "summary": summary})
-    except Exception as e:
-        log.exception("Erro na classificação Suprides")
-        return jsonify({"success": False, "error": str(e)}), 500
+    """Compat wrapper que delega para o blueprint de Suprides."""
+    return suprides_classify_api()
 
 
 @app.route("/suprides/review_classified")

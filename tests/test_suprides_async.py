@@ -55,6 +55,9 @@ def test_classify_defaults_to_async(monkeypatch, suprides_client):
     assert data["job"]["running"] is True
     assert data["poll_url"].endswith("/suprides/jobs/suprides/status")
     assert triggered["job_id"]
+    assert data["message"].startswith("Job de classificação Suprides")
+    assert data["csv"].endswith("suprides_classified.csv")
+    assert data["review_url"].endswith("/suprides/review_classified")
 
 
 def test_classify_blocking_flow(monkeypatch, suprides_client):
@@ -78,6 +81,7 @@ def test_classify_blocking_flow(monkeypatch, suprides_client):
 
     def fake_save(result_df):
         captured["rows"] = list(result_df["sku"].tolist())
+        return result_df
 
     monkeypatch.setattr(sup, "save_suprides_df", fake_save)
 
@@ -88,6 +92,8 @@ def test_classify_blocking_flow(monkeypatch, suprides_client):
     assert data["mode"] == "blocking"
     assert data["rows"] == 2
     assert data["csv"].endswith("suprides_classified.csv")
+    assert data["message"] == "Classificação concluída em modo síncrono."
+    assert data["review_url"].endswith("/suprides/review_classified")
     assert captured["rows"] == ["SKU1", "SKU2"]
 
 
@@ -109,3 +115,47 @@ def test_classify_async_endpoint_respects_running_state(monkeypatch, suprides_cl
     assert data["already_running"] is True
     assert data["job"]["job_id"] == "existing"
     assert called["count"] == 0
+    assert data["message"].startswith("Job de classificação Suprides já estava")
+
+
+def test_async_job_finalizes_and_updates_state(monkeypatch, suprides_client):
+    client, sup = suprides_client
+
+    df = pd.DataFrame(
+        [
+            {"sku": "SKU1", "title": "Produto 1", "status": "catalog_match"},
+            {"sku": "SKU2", "title": "Produto 2", "status": "not_found"},
+        ]
+    )
+
+    monkeypatch.setattr(sup, "classify_suprides_products", lambda simulate=False: df)
+
+    captured = {}
+
+    def fake_save(result_df):
+        captured["rows"] = list(result_df["sku"].tolist())
+        return result_df
+
+    monkeypatch.setattr(sup, "save_suprides_df", fake_save)
+
+    class ImmediateThread:
+        def __init__(self, target, name=None, daemon=None):
+            self._target = target
+
+        def start(self):
+            self._target()
+
+    monkeypatch.setattr(sup.threading, "Thread", ImmediateThread)
+
+    resp = client.post("/suprides/classify_async")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    job = data["job"]
+
+    assert job["running"] is False
+    assert job["success"] is True
+    assert job["rows"] == 2
+    assert job["csv"].endswith("suprides_classified.csv")
+    assert job["summary"]["catalog_match"] == 1
+    assert job["summary"]["not_found"] == 1
+    assert captured["rows"] == ["SKU1", "SKU2"]

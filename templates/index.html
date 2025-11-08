@@ -68,17 +68,15 @@
           {% endfor %}
         </ul>
         <p>
-          <a href="/suprides/classify">Executar classificação (Suprides)</a> |
           <a href="/suprides/review_classified">Ver classificados Suprides</a>
         </p>
       {% else %}
         <p class="muted">Sem classificação de Suprides.</p>
-        <p>
-          <a href="/suprides/classify">Executar classificação</a>
-        </p>
       {% endif %}
+      <p class="muted" style="margin-top: 8px;">Usa o botão abaixo para iniciar um job assíncrono (recomendado). O link de compatibilidade executa o fluxo antigo e pode demorar.</p>
       <p>
         <button id="btnSupridesClassifyAsync" type="button">Classificar Suprides (assíncrono)</button>
+        <a class="muted" href="/suprides/classify?blocking=1" style="margin-left:12px;">Modo compatibilidade (síncrono)</a>
         <span id="supridesJobStatus" class="muted" style="margin-left:8px;"></span>
       </p>
     </div>
@@ -99,9 +97,9 @@
 
 </body>
 <script>
-  async function fetchSupridesStatus() {
+  async function fetchSupridesStatus(url = '/suprides/jobs/suprides/status') {
     try {
-      const resp = await fetch('/suprides/jobs/suprides/status');
+      const resp = await fetch(url);
       if (!resp.ok) return null;
       return await resp.json();
     } catch (err) {
@@ -120,6 +118,9 @@
     const job = data.job;
     if (job.running) {
       el.textContent = `Job ${job.job_id || ''} em execução…`;
+      if (data.already_running) {
+        el.textContent += ' (já existia job ativo)';
+      }
     } else if (job.success === true) {
       el.textContent = `Último job: ${job.rows || 0} linhas • ${job.finished_at || ''}`;
     } else if (job.success === false) {
@@ -129,11 +130,11 @@
     }
   }
 
-  async function pollSupridesStatus(intervalMs = 5000) {
-    const data = await fetchSupridesStatus();
+  async function pollSupridesStatus(intervalMs = 5000, url = '/suprides/jobs/suprides/status') {
+    const data = await fetchSupridesStatus(url);
     renderSupridesStatus(data);
     if (data && data.job && data.job.running) {
-      setTimeout(() => pollSupridesStatus(intervalMs), intervalMs);
+      setTimeout(() => pollSupridesStatus(intervalMs, url), intervalMs);
     }
   }
 
@@ -143,10 +144,15 @@
     const original = btn.textContent;
     btn.textContent = 'A iniciar…';
     try {
-      const resp = await fetch('/suprides/classify_async', { method: 'POST' });
+      const resp = await fetch('/suprides/classify', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ async: true })
+      });
       const data = await resp.json();
       renderSupridesStatus(data);
-      pollSupridesStatus();
+      const pollUrl = (data && data.poll_url) ? data.poll_url : '/suprides/jobs/suprides/status';
+      pollSupridesStatus(5000, pollUrl);
     } catch (err) {
       console.error('Erro a iniciar classificação', err);
       const statusEl = document.getElementById('supridesJobStatus');

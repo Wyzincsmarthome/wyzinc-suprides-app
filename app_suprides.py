@@ -237,6 +237,66 @@ def _start_classify_job(job_id: str, flask_app) -> None:
     thread.start()
 
 
+def _coerce_bool(value) -> bool | None:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return bool(value)
+    try:
+        text = str(value).strip().lower()
+    except Exception:
+        return None
+    if text in {"1", "true", "yes", "on"}:
+        return True
+    if text in {"0", "false", "no", "off"}:
+        return False
+    return None
+
+
+def _should_run_blocking(req) -> bool:
+    arg_blocking = _coerce_bool(req.args.get("blocking"))
+    if arg_blocking is not None:
+        return arg_blocking
+
+    arg_async = _coerce_bool(req.args.get("async"))
+    if arg_async is not None:
+        return not arg_async
+
+    if req.method in {"POST", "PUT", "PATCH"}:
+        data = req.get_json(silent=True)
+        if isinstance(data, dict):
+            if "blocking" in data:
+                coerced = _coerce_bool(data.get("blocking"))
+                if coerced is not None:
+                    return coerced
+            if "async" in data:
+                coerced = _coerce_bool(data.get("async"))
+                if coerced is not None:
+                    return not coerced
+
+        if req.form:
+            form_blocking = _coerce_bool(req.form.get("blocking"))
+            if form_blocking is not None:
+                return form_blocking
+            form_async = _coerce_bool(req.form.get("async"))
+            if form_async is not None:
+                return not form_async
+
+    return False
+
+
+def _trigger_async_job(flask_app):
+    state = _get_job_state()
+    if state.get("running"):
+        return state, True
+
+    job_id = datetime.utcnow().strftime("%Y%m%d%H%M%S") + f"-{uuid.uuid4().hex[:6]}"
+    _start_classify_job(job_id, flask_app)
+    return _get_job_state(), False
+
+
 def _parse_limit(default: int = 200) -> int:
     raw = (request.args.get("limit") or "").strip()
     if not raw:
@@ -293,14 +353,16 @@ def download_feed_csv():
 @bp.route("/classify_async", methods=["POST", "GET"])
 def classify_async():
     """Dispara a classificação em background e devolve o estado do job."""
-    state = _get_job_state()
-    if state.get("running"):
-        return jsonify({"success": True, "job": state, "already_running": True})
-
-    job_id = datetime.utcnow().strftime("%Y%m%d%H%M%S") + f"-{uuid.uuid4().hex[:6]}"
     flask_app = current_app._get_current_object()
-    _start_classify_job(job_id, flask_app)
-    return jsonify({"success": True, "job": _get_job_state(), "already_running": False})
+    state, already_running = _trigger_async_job(flask_app)
+    return jsonify(
+        {
+            "success": True,
+            "job": state,
+            "already_running": already_running,
+            "poll_url": url_for("suprides.job_status", _external=True),
+        }
+    )
 
 
 @bp.route("/jobs/suprides/status", methods=["GET"])
@@ -315,17 +377,31 @@ def job_status_live():
     return job_status()
 
 
-@bp.route("/suprides/classify", methods=["GET"])
+@bp.route("/classify", methods=["GET", "POST"])
+@bp.route("/suprides/classify", methods=["GET", "POST"])
 def suprides_classify_route():
     """
     Dispara a classificação Suprides e grava o CSV para posterior leitura no UI.
     """
+    if not _should_run_blocking(request):
+        flask_app = current_app._get_current_object()
+        state, already_running = _trigger_async_job(flask_app)
+        return jsonify(
+            {
+                "success": True,
+                "job": state,
+                "already_running": already_running,
+                "poll_url": url_for("suprides.job_status", _external=True),
+                "mode": "async",
+            }
+        )
+
     df = classify_suprides_products(simulate=False)  # garante simulate=False
 
     if df is None or df.empty:
         # grava CSV vazio com headers (para a UI saber as colunas)
         save_suprides_df(pd.DataFrame(columns=NEEDED_COLS))
-        return jsonify({"success": True, "rows": 0, "csv": SUPRIDES_CSV})
+        return jsonify({"success": True, "rows": 0, "csv": SUPRIDES_CSV, "mode": "blocking"})
 
     # normaliza headers (caso a function devolva nomes alternativos)
     rename_map = {
@@ -338,7 +414,7 @@ def suprides_classify_route():
 
     # garante colunas esperadas e strings e grava
     save_suprides_df(df)
-    return jsonify({"success": True, "rows": int(df.shape[0]), "csv": SUPRIDES_CSV})
+    return jsonify({"success": True, "rows": int(df.shape[0]), "csv": SUPRIDES_CSV, "mode": "blocking"})
 
 
 @bp.route("/review_classified", methods=["GET"])

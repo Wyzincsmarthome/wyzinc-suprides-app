@@ -50,7 +50,15 @@ NEEDED_COLS = [
     "floor_price", "selling_price"
 ]
 
+CLASSIFY_RENAME_MAP = {
+    "name": "title",
+    "qty_available": "stock",
+    "price_cost": "cost",
+    "final_price": "selling_price",
+}
+
 bp = Blueprint("suprides", __name__, url_prefix="/suprides")
+REVIEW_CLASSIFIED_URL = f"{bp.url_prefix}/review_classified"
 
 
 _job_lock = threading.Lock()
@@ -68,6 +76,8 @@ def _default_job_state() -> Dict[str, Any]:
         "summary": {},
         "storage_provider": os.environ.get("STORAGE_PROVIDER", "local"),
         "updated_at": None,
+        "csv": SUPRIDES_CSV,
+        "review_url": REVIEW_CLASSIFIED_URL,
     }
 
 
@@ -108,6 +118,10 @@ def _set_job_state(**updates: Any) -> Dict[str, Any]:
     with _job_lock:
         _job_state.update(updates)
         _job_state["updated_at"] = datetime.utcnow().isoformat() + "Z"
+        if not _job_state.get("csv"):
+            _job_state["csv"] = SUPRIDES_CSV
+        if not _job_state.get("review_url"):
+            _job_state["review_url"] = REVIEW_CLASSIFIED_URL
         state_copy = dict(_job_state)
     _persist_job_state(state_copy)
     return state_copy
@@ -130,15 +144,33 @@ def _ensure_columns(df: pd.DataFrame, needed: List[str] | None = None) -> pd.Dat
     return df
 
 
-def save_suprides_df(df: pd.DataFrame) -> None:
+def save_suprides_df(df: pd.DataFrame | None) -> pd.DataFrame:
     """
     Normaliza e grava sempre no mesmo CSV absoluto.
     """
+    if df is None:
+        df = pd.DataFrame()
+    if not isinstance(df, pd.DataFrame):
+        df = pd.DataFrame(df)
     df = _ensure_columns(df)
     df = df.astype(str).replace("nan", "").fillna("")
     tmp = SUPRIDES_CSV + ".tmp"
     df.to_csv(tmp, index=False, encoding="utf-8")
     os.replace(tmp, SUPRIDES_CSV)
+    return df
+
+
+def _normalize_classification_df(df: pd.DataFrame | None) -> pd.DataFrame:
+    if df is None:
+        return _ensure_columns(pd.DataFrame(columns=NEEDED_COLS))
+    if not isinstance(df, pd.DataFrame):
+        try:
+            df = pd.DataFrame(df)
+        except Exception:
+            return _ensure_columns(pd.DataFrame(columns=NEEDED_COLS))
+    df = df.rename(columns=CLASSIFY_RENAME_MAP)
+    df = _ensure_columns(df)
+    return df
 
 
 def load_suprides_df() -> pd.DataFrame:
@@ -206,12 +238,15 @@ def _start_classify_job(job_id: str, flask_app) -> None:
         error=None,
         rows=0,
         summary={},
+        csv=SUPRIDES_CSV,
     )
 
     def _runner() -> None:
         try:
             with flask_app.app_context():
                 df = classify_suprides_products(simulate=False)
+                df = _normalize_classification_df(df)
+                df = save_suprides_df(df)
         except Exception as exc:
             log.exception("Job de classificação Suprides falhou")
             _set_job_state(
@@ -219,6 +254,7 @@ def _start_classify_job(job_id: str, flask_app) -> None:
                 finished_at=datetime.utcnow().isoformat() + "Z",
                 success=False,
                 error=str(exc),
+                csv=SUPRIDES_CSV,
             )
             return
 
@@ -231,6 +267,7 @@ def _start_classify_job(job_id: str, flask_app) -> None:
             error=None,
             rows=len(rows),
             summary=summary,
+            csv=SUPRIDES_CSV,
         )
 
     thread = threading.Thread(target=_runner, name=f"suprides-classify-{job_id}", daemon=True)
@@ -355,12 +392,21 @@ def classify_async():
     """Dispara a classificação em background e devolve o estado do job."""
     flask_app = current_app._get_current_object()
     state, already_running = _trigger_async_job(flask_app)
+    message = (
+        "Job de classificação Suprides já estava em execução."
+        if already_running
+        else "Job de classificação Suprides iniciado em background."
+    )
     return jsonify(
         {
             "success": True,
             "job": state,
             "already_running": already_running,
             "poll_url": url_for("suprides.job_status", _external=True),
+            "message": message,
+            "csv": state.get("csv"),
+            "review_url": state.get("review_url", REVIEW_CLASSIFIED_URL),
+            "mode": "async",
         }
     )
 
@@ -386,6 +432,11 @@ def suprides_classify_route():
     if not _should_run_blocking(request):
         flask_app = current_app._get_current_object()
         state, already_running = _trigger_async_job(flask_app)
+        message = (
+            "Job de classificação Suprides já estava em execução."
+            if already_running
+            else "Job de classificação Suprides iniciado em background."
+        )
         return jsonify(
             {
                 "success": True,
@@ -393,28 +444,27 @@ def suprides_classify_route():
                 "already_running": already_running,
                 "poll_url": url_for("suprides.job_status", _external=True),
                 "mode": "async",
+                "message": message,
+                "csv": state.get("csv"),
+                "review_url": state.get("review_url", REVIEW_CLASSIFIED_URL),
             }
         )
 
     df = classify_suprides_products(simulate=False)  # garante simulate=False
+    df = _normalize_classification_df(df)
+    df = save_suprides_df(df)
 
-    if df is None or df.empty:
-        # grava CSV vazio com headers (para a UI saber as colunas)
-        save_suprides_df(pd.DataFrame(columns=NEEDED_COLS))
-        return jsonify({"success": True, "rows": 0, "csv": SUPRIDES_CSV, "mode": "blocking"})
-
-    # normaliza headers (caso a function devolva nomes alternativos)
-    rename_map = {
-        "name": "title",
-        "qty_available": "stock",
-        "price_cost": "cost",
-        "final_price": "selling_price",
-    }
-    df = df.rename(columns=rename_map)
-
-    # garante colunas esperadas e strings e grava
-    save_suprides_df(df)
-    return jsonify({"success": True, "rows": int(df.shape[0]), "csv": SUPRIDES_CSV, "mode": "blocking"})
+    rows = int(df.shape[0]) if hasattr(df, "shape") else 0
+    return jsonify(
+        {
+            "success": True,
+            "rows": rows,
+            "csv": SUPRIDES_CSV,
+            "mode": "blocking",
+            "message": "Classificação concluída em modo síncrono.",
+            "review_url": REVIEW_CLASSIFIED_URL,
+        }
+    )
 
 
 @bp.route("/review_classified", methods=["GET"])

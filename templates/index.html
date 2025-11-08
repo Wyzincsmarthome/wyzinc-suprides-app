@@ -111,22 +111,55 @@
   function renderSupridesStatus(data) {
     const el = document.getElementById('supridesJobStatus');
     if (!el) return;
+    el.textContent = '';
     if (!data || !data.job) {
-      el.textContent = '';
       return;
     }
     const job = data.job;
+    const message = data.message || '';
     if (job.running) {
-      el.textContent = `Job ${job.job_id || ''} em execução…`;
+      let text = job.job_id ? `Job ${job.job_id} em execução…` : 'Job em execução…';
+      if (message) {
+        text = `${message} ${text}`.trim();
+      }
+      el.textContent = text;
       if (data.already_running) {
         el.textContent += ' (já existia job ativo)';
       }
-    } else if (job.success === true) {
-      el.textContent = `Último job: ${job.rows || 0} linhas • ${job.finished_at || ''}`;
-    } else if (job.success === false) {
-      el.textContent = `Job falhou: ${job.error || 'erro desconhecido'}`;
-    } else {
-      el.textContent = '';
+      return;
+    }
+
+    if (job.success === true) {
+      const parts = [];
+      if (message) {
+        parts.push(message);
+      }
+      parts.push(`Último job: ${job.rows || 0} linhas`);
+      if (job.finished_at) {
+        parts.push(job.finished_at);
+      }
+      el.textContent = parts.join(' • ');
+      const reviewUrl = job.review_url || data.review_url;
+      if (reviewUrl) {
+        const link = document.createElement('a');
+        link.href = reviewUrl;
+        link.textContent = 'Ver resultados';
+        link.style.marginLeft = '8px';
+        link.style.color = '#3b82f6';
+        link.target = '_blank';
+        el.appendChild(link);
+      }
+      return;
+    }
+
+    if (job.success === false) {
+      const base = message ? `${message} ` : '';
+      el.textContent = `${base}Job falhou: ${job.error || 'erro desconhecido'}`;
+      return;
+    }
+
+    if (message) {
+      el.textContent = message;
     }
   }
 
